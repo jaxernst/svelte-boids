@@ -1,6 +1,18 @@
-# Svelte + TS + Vite
+# Svelte + Boids
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+An implementation of Boid's algorithm 
+
+# To start the webapp:
+
+`npm run dev`
+
+or     
+
+`yarn dev`
+
+
+
+Built with Svelte + Vite + TS:
 
 ## Recommended IDE Setup
 
