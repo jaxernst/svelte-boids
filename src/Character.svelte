@@ -2,7 +2,7 @@
   import { renderable, width, height } from "./game.js";
   import Text from "./Text.svelte";
   import vec2 from "gl-vec2";
-  import { detractorPos } from "./boidSimControls";
+  import { cursorPos } from "./boidSimControls";
 
   export let color = "#ffe554";
   export let size = 10;
@@ -55,7 +55,7 @@
     position[0] = x;
     position[1] = y;
 
-    detractorPos.set([x, y]);
+    cursorPos.set([x, y]);
 
     context.lineCap = "round";
 

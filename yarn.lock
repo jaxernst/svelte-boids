@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@bulatdashiev/svelte-slider@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@bulatdashiev/svelte-slider/-/svelte-slider-1.0.3.tgz#a26630657e0ff812410247f58e9907609bd0a166"
+  integrity sha512-GkVyqIjzQnqy0FQIm8wqRLIOFQBQ/Ewd381Y7KwABsSwiSu0eMYO0/8s4q/wlMDDb2/+U66rXlalaUokUfw8Vg==
+
 "@esbuild/android-arm64@0.16.17":
   version "0.16.17"
   resolved "https://registry.yarnpkg.com/@esbuild/android-arm64/-/android-arm64-0.16.17.tgz#cf91e86df127aa3d141744edafcba0abdc577d23"

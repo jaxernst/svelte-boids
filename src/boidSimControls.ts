@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
 
-export const detractorPos = writable<[number, number] | undefined>();
+export const cursorPos = writable<[number, number] | undefined>();
 export const addBoid = writable<any>();
+export const forceSmoothing = writable<"on" | "off">("off");

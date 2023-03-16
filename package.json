@@ -19,6 +19,7 @@
     "vite": "^4.1.0"
   },
   "dependencies": {
+    "@bulatdashiev/svelte-slider": "^1.0.3",
     "gl-vec2": "^1.3.0",
     "vector2d": "^3.0.0"
   }

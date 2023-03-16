@@ -50,7 +50,7 @@ export function canvasArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
   ctx.restore();
 }
 
-export const MakeBoidDrawer = (size: number) => {
+export const MakeBoidDrawer = (size: number, color?: string) => {
   return (pos, vel, ctx) => {
     // Calculate the magnitude of the velocity vector
     const magnitude = Math.sqrt(vel[0] ** 2 + vel[1] ** 2);
@@ -58,12 +58,13 @@ export const MakeBoidDrawer = (size: number) => {
     // Calculate the angle between the velocity vector and the x-axis
     const angle = Math.atan2(vel[1], vel[0]);
 
-    const length = magnitude * 4;
+    const length = magnitude / 15;
 
     // Set the fill color to red
-    ctx.fillStyle = "red";
+    ctx.fillStyle = color ? color : "red";
 
     // Calculate the position of the vertices of the triangle based on the velocity vector
+    // Thanks chat gpt
     const x1 = pos[0] + length * Math.cos(angle);
     const y1 = pos[1] + length * Math.sin(angle);
     const x2 = pos[0] + size * Math.cos(angle + (2 * Math.PI) / 3);

@@ -8,7 +8,10 @@
   import Text from "./Text.svelte";
   import FPS from "./FPS.svelte";
   import BoidSimulation from "./BoidSimulation.svelte";
-  import { addBoid } from "./boidSimControls.js";
+  import { addBoid, forceSmoothing } from "./boidSimControls.js";
+  import Switch from "./lib/svelte-components/Switch.svelte";
+  import { onMount } from "svelte";
+  import Slider from "@bulatdashiev/svelte-slider";
 
   let started = false;
   $: command = $width > 700 ? "click" : "tap";
@@ -54,6 +57,12 @@
       <div class="right-bar">
         {#if started}
           <button on:click={() => $addBoid && $addBoid()}>Spawn</button>
+          <div style="font-size: 10px">
+            <Switch bind:value={$forceSmoothing} label="" design="inner" />
+          </div>
+          <div style="font-size: 10px">
+            <Slider />
+          </div>
         {/if}
       </div>
     </div>
@@ -108,5 +117,9 @@
     grid-row: 1/-1;
     padding-top: 1.5em;
     margin-right: 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 1em;
   }
 </style>

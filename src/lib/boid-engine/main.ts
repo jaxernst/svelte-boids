@@ -1,30 +1,8 @@
+import { align, detract, gravitate, separate } from "./boid-functions";
 import { canvasArrow, drawPoint } from "./canvas-drawers";
-import {
-  add,
-  distance,
-  dot,
-  mul,
-  norm,
-  subtract,
-  magnitude,
-  div,
-} from "./vectorMath";
-
-type Vec2D = [number, number];
-type BoidVec = { pos: Vec2D; vel: Vec2D; accel: Vec2D };
-export type Boid = {
-  vec: BoidVec;
-  mass: number;
-  maxV: number;
-  minV: number;
-  sightRadius: number;
-  sightPeripheralDeg: number;
-  separationDistance: number;
-  separationFactor: number;
-  gravitationFactor: number;
-  alignmentFactor: number;
-  frictionCoefficient: number;
-};
+import type { Boid, BoidAttrs, BoidVec, Vec2D } from "./types";
+import { findBoidsInSight, limitSpeed, makeMovingAverage } from "./sim-utils";
+import { add, magnitude, mul } from "./vectorMath";
 
 const boidVec: BoidVec = {
   pos: [0, 0],
@@ -33,16 +11,18 @@ const boidVec: BoidVec = {
 };
 
 const defaultAttrs = {
-  mass: 15,
-  maxV: 10,
-  minV: 4,
+  mass: 1,
+  maxV: 700,
+  minV: 30,
   sightRadius: 250,
   sightPeripheralDeg: 180,
-  separationDistance: 40,
+  separationDistance: 50,
+  gravitationDistance: 150,
   separationFactor: 1,
-  gravitationFactor: 1,
-  alignmentFactor: 1,
+  gravitationFactor: 0.8,
+  alignmentFactor: 0.1,
   frictionCoefficient: 0.985,
+  forceSmoothing: 20,
 };
 
 const defaultBoid = {
@@ -50,92 +30,15 @@ const defaultBoid = {
   ...defaultAttrs,
 };
 
-let detractorDistance = 100;
+const cursorSettings = {
+  detractorDistance: 100,
+  detractorStrength: 50000,
+};
 
-function align(boid: Boid, others: Boid[]) {
-  let vSum = [0, 0];
-  for (let other of others) {
-    vSum[0] += other.vec.vel[0];
-    vSum[1] += other.vec.vel[1];
-  }
-
-  const vAvg = [vSum[0] / others.length, vSum[1] / others.length] as Vec2D;
-  return subtract(vAvg, boid.vec.vel);
-}
-
-function gravitate(boid: Boid, others: Boid[], ctx) {
-  const pSum = [0, 0];
-  for (let other of others) {
-    pSum[0] += other.vec.pos[0];
-    pSum[1] += other.vec.pos[1];
-  }
-  const pAvg = [pSum[0] / others.length, pSum[1] / others.length] as Vec2D;
-
-  // Draw cg
-  drawPoint(...pAvg, ctx);
-  return subtract(pAvg, boid.vec.pos);
-}
-
-function separate(
-  boid: Boid,
-  others: Boid[],
-  refDist: number,
-  ctx: CanvasRenderingContext2D
-): Vec2D {
-  const pSum = [0, 0];
-  for (let other of others) {
-    pSum[0] += other.vec.pos[0];
-    pSum[1] += other.vec.pos[1];
-  }
-  const pAvg = [pSum[0] / others.length, pSum[1] / others.length] as Vec2D;
-  const dist = distance(boid.vec.pos, pAvg);
-  if (dist > boid.separationDistance) return [0, 0];
-
-  const vAway = norm(subtract(boid.vec.pos, pAvg));
-  return mul(vAway, refDist / (dist + 0.1));
-}
-
-function detract(
-  boid: Boid,
-  point: [number, number],
-  strength: number,
-  minDistance: number
-): Vec2D {
-  if (!(distance(boid.vec.pos, point) <= minDistance)) return [0, 0];
-  const diff = subtract(boid.vec.pos, point);
-  return mul(diff, strength / magnitude(diff) ** 2 + 1);
-}
-
-function findBoidsInSight(boid: Boid, others: Boid[]) {
-  const bVec = boid.vec;
-  const directionNorm = norm(boid.vec.vel);
-
-  let output = others
-    .filter((other) => {
-      return distance(bVec.pos, other.vec.pos) < boid.sightRadius;
-    })
-    .filter((other: Boid) => {
-      const toOtherNorm = norm(subtract(other.vec.pos, bVec.pos));
-      const angleRad = Math.acos(dot(directionNorm, toOtherNorm));
-      return angleRad < ((boid.sightPeripheralDeg / 2) * Math.PI) / 180;
-    });
-
-  return output;
-}
-
-function limitSpeed(boid: Boid) {
-  const speed = magnitude(boid.vec.vel);
-  if (speed > boid.maxV) {
-    return mul(div(boid.vec.vel, speed), boid.maxV);
-  }
-  if (speed < boid.minV) {
-    return mul(div(boid.vec.vel, speed), boid.minV);
-  }
-  return boid.vec.vel;
-}
-
+// Main simulation loop updater
 function update(
   boids: Boid[],
+  dt: number,
   board: { h: number; w: number },
   cursor: Vec2D | undefined,
   ctx
@@ -149,32 +52,55 @@ function update(
 
     let force = [0, 0] as Vec2D;
     if (others.length > 0) {
-      force = add(
-        force,
-        mul(align(boid, others), boid.alignmentFactor),
-        mul(gravitate(boid, others, ctx), boid.gravitationFactor),
-        mul(separate(boid, others, board.w, ctx), boid.separationFactor)
+      const gForce = mul(gravitate(boid, others, ctx), boid.gravitationFactor);
+      const aForce = mul(align(boid, others, ctx), boid.alignmentFactor);
+      const sForce = mul(
+        separate(boid, others, board.w),
+        boid.separationFactor
       );
+
+      /*console.log(
+        "g:",
+        magnitude(gForce),
+        "s:",
+        magnitude(sForce),
+        "a:",
+        magnitude(aForce)
+      ); */
+
+      force = add(force, gForce, aForce, sForce);
     }
 
-    force = norm(force);
+    if (boid.forceSmoothing > 0 && boid.forceMovingAverage) {
+      let x = force[0];
+      force = boid.forceMovingAverage(force);
+    }
 
+    // If cursor position, run away from the cursor
     if (cursor) {
-      force = add(force, detract(boid, cursor, 10, detractorDistance));
+      force = add(
+        force,
+        detract(
+          boid,
+          cursor,
+          cursorSettings.detractorStrength,
+          cursorSettings.detractorDistance
+        )
+      );
     }
 
     vec.accel[0] = force[0] / (boid.mass + 0.01);
     vec.accel[1] = force[1] / (boid.mass + 0.01);
 
-    vec.vel[0] += vec.accel[0];
-    vec.vel[1] += vec.accel[1];
+    vec.vel[0] += vec.accel[0] * dt;
+    vec.vel[1] += vec.accel[1] * dt;
 
     vec.vel[0] *= boid.frictionCoefficient;
     vec.vel[1] *= boid.frictionCoefficient;
     vec.vel = limitSpeed(boid);
 
-    vec.pos[0] += vec.vel[0];
-    vec.pos[1] += vec.vel[1];
+    vec.pos[0] += vec.vel[0] * dt;
+    vec.pos[1] += vec.vel[1] * dt;
 
     // Enforce boundaries
     if (vec.pos[0] > board.w) vec.pos[0] = 0;
@@ -194,6 +120,7 @@ export function createBoidSimulation({
   startPos,
   startVel,
   boardSize,
+  boidType,
 }: {
   numBoids: number;
   startPos: [() => number, () => number];
@@ -202,9 +129,10 @@ export function createBoidSimulation({
     h: number;
     w: number;
   };
+  boidType?: Partial<BoidAttrs>;
 }) {
   if (boardSize.w < 650) {
-    detractorDistance = 50;
+    cursorSettings.detractorDistance = 50;
     defaultBoid.frictionCoefficient = 0.97;
     defaultBoid.separationDistance = 20;
     defaultBoid.sightRadius = 150;
@@ -213,6 +141,7 @@ export function createBoidSimulation({
   }
   let boids = [...Array(numBoids)].map(() => ({
     ...defaultBoid,
+    ...boidType,
     vec: {
       ...boidVec,
       pos: [startPos[0](), startPos[1]()],
@@ -220,20 +149,51 @@ export function createBoidSimulation({
     },
   })) as Boid[];
 
+  boids = boids.map((boid) => {
+    boid.forceMovingAverage = makeMovingAverage(
+      [0, 0],
+      (boidType ?? defaultBoid).forceSmoothing
+    );
+    return boid;
+  });
+
   let addBoidQueue: (() => Boid)[] = [];
+  let updateBoidQueue: ((
+    attrs: Partial<BoidAttrs>,
+    atIndex: number
+  ) => Boid)[] = [];
   let board = boardSize;
 
   return {
-    update: (cursor: Vec2D, ctx, board: { w: number; h: number }) => {
+    update: (
+      dt: number,
+      cursor: Vec2D,
+      ctx: {
+        htmlContext?: CanvasRenderingContext2D;
+        visibleBoard?: { w: number; h: number };
+      }
+    ) => {
+      // Add boids from the queue
       for (let addBoid of addBoidQueue) {
         boids = [...boids, addBoid()];
       }
 
+      // Apply queued boid 'behavoir' update
+      for (let updateBoid of updateBoidQueue) {
+        boids = boids.map((boid, i) => updateBoid(boid, i));
+      }
+
       addBoidQueue = [];
-      boids = update(boids, board, cursor, ctx);
+      boids = update(
+        boids,
+        dt,
+        ctx.visibleBoard ?? board,
+        cursor,
+        ctx.htmlContext
+      );
       return boids;
     },
-    onResize: (newBoard: { h: number; w: number }) => {
+    resizeBoard: (newBoard: { h: number; w: number }) => {
       board = newBoard;
     },
     addBoid: (
@@ -252,8 +212,17 @@ export function createBoidSimulation({
       }));
       return i;
     },
+    updateBoids: (newAttrs: Partial<BoidAttrs>, atIndices?: number[]) => {
+      console.log("Udating");
+      if (!atIndices) {
+        atIndices = Array.from({ length: boids.length }, (_, i) => i);
+      }
+      updateBoidQueue.push((boid: Boid, boidIndex: number) => {
+        if (atIndices.includes(boidIndex)) {
+          return { ...boid, ...newAttrs };
+        }
+        return boid;
+      });
+    },
   };
-}
-function average(arg0: [number, number][]) {
-  throw new Error("Function not implemented.");
 }
