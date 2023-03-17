@@ -13,7 +13,7 @@ const boidVec: BoidVec = {
 const defaultAttrs = {
   mass: 1,
   maxV: 700,
-  minV: 50,
+  minV: 58,
   sightRadius: 230,
   sightPeripheralDeg: 160,
   separationDistance: 50,
