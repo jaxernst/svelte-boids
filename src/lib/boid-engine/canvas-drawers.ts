@@ -1,7 +1,10 @@
 export function drawPoint(x, y, ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = "yellow";
+  ctx.shadowBlur = 3;
+  ctx.shadowColor = "yellow";
   ctx.moveTo(x, y);
   ctx.fillRect(x, y, 3, 3);
+  ctx.shadowBlur = 0;
 }
 
 export function canvasArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
@@ -11,8 +14,6 @@ export function canvasArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
 
   ctx.save();
   ctx.strokeStyle = color;
-  ctx.shadowBlur = 100;
-  ctx.shadowColor = "black";
 
   //starting path of the arrow from the start square to the end square
   //and drawing the stroke
