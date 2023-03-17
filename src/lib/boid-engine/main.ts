@@ -13,14 +13,14 @@ const boidVec: BoidVec = {
 const defaultAttrs = {
   mass: 1,
   maxV: 700,
-  minV: 30,
-  sightRadius: 250,
-  sightPeripheralDeg: 180,
+  minV: 50,
+  sightRadius: 230,
+  sightPeripheralDeg: 160,
   separationDistance: 50,
   gravitationDistance: 150,
   separationFactor: 1,
   gravitationFactor: 0.8,
-  alignmentFactor: 0.1,
+  alignmentFactor: 0.09,
   frictionCoefficient: 0.985,
   forceSmoothing: 20,
 };

@@ -27,7 +27,7 @@
     <Character
       size={10}
       moveSpeed={0.7}
-      maxVelocity={7}
+      maxVelocity={$width > 700 ? 9 : 7}
       startX={$width / 2}
       startY={$height / 1.6}
     />
