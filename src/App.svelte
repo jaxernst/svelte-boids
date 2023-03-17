@@ -74,7 +74,7 @@
   </div>
 
   <div class="twitter-link">
-    <a href="https://twitter.com/yachtyyachty">
+    <a href="https://twitter.com/yachtyyachty" target="_blank" rel="noreferrer">
       <TwitterLogo />
     </a>
   </div>
