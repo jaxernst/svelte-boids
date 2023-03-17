@@ -25,9 +25,9 @@
 
     <BoidSimulation {started} />
     <Character
-      size={10}
+      size={$width > 700 ? 10 : 7}
       moveSpeed={0.7}
-      maxVelocity={$width > 700 ? 9 : 7}
+      maxVelocity={$width > 700 ? 9 : 4}
       startX={$width / 2}
       startY={$height / 1.6}
     />
@@ -55,7 +55,12 @@
 
   <div class="overlay">
     <div class="content-container">
-      <h1 class="left" style="margin-bottom:0">Svelte Boids</h1>
+      <div class="left">
+        <h1 class="left" style="margin-bottom:0">Digital Boids</h1>
+        <i class="left" style="font-size: 12px; margin-top: 1em"
+          >A flocking simulation visualizer</i
+        >
+      </div>
       <div class="right-bar">
         {#if started}
           <button on:click={() => $addBoid && $addBoid()}>Spawn</button>

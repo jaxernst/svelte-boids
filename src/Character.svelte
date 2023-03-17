@@ -103,6 +103,8 @@
   on:touchstart={(e) =>
     e.targetTouches[0] && handleMouseDown(e.targetTouches[0])}
   on:touchend={(e) => e.targetTouches[0] && handleMouseUp(e.targetTouches[0])}
+  on:touchcancel={(e) =>
+    e.targetTouches[0] && handleMouseUp(e.targetTouches[0])}
   on:touchmove={(e) =>
     e.targetTouches[0] && handleMouseMove(e.targetTouches[0])}
   on:mousedown={handleMouseDown}
