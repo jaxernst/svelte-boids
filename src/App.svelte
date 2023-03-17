@@ -1,6 +1,5 @@
 <script lang="ts">
   import { width, height } from "./game.js";
-
   import Canvas from "./Canvas.svelte";
   import Background from "./Background.svelte";
   import DotGrid from "./DotGrid.svelte";
@@ -12,6 +11,7 @@
   import Switch from "./lib/svelte-components/Switch.svelte";
   import { onMount } from "svelte";
   import Slider from "@bulatdashiev/svelte-slider";
+  import TwitterLogo from "./lib/svelte-components/TwitterLogo.svelte";
 
   let started = false;
   $: command = $width > 700 ? "click" : "tap";
@@ -25,9 +25,11 @@
 
     <BoidSimulation {started} />
     <Character
-      size={started ? 10 : 0}
+      size={10}
       moveSpeed={0.7}
-      maxVelocity={$width > 700 ? 10 : 4}
+      maxVelocity={7}
+      startX={$width / 2}
+      startY={$height / 1.6}
     />
     <div class="big-screen-only">
       <Text
@@ -35,7 +37,7 @@
         fontSize={12}
         align="left"
         baseline="bottom"
-        x={20}
+        x={36}
         y={$height - 20}
       />
     </div>
@@ -57,15 +59,24 @@
       <div class="right-bar">
         {#if started}
           <button on:click={() => $addBoid && $addBoid()}>Spawn</button>
+          <!-- 
           <div style="font-size: 10px">
             <Switch bind:value={$forceSmoothing} label="" design="inner" />
           </div>
-          <div style="font-size: 10px">
-            <Slider />
-          </div>
+            
+            <div style="font-size: 10px">
+              <Slider />
+            </div>
+          -->
         {/if}
       </div>
     </div>
+  </div>
+
+  <div class="twitter-link">
+    <a href="https://twitter.com/yachtyyachty">
+      <TwitterLogo />
+    </a>
   </div>
 
   {#if !started}
@@ -73,7 +84,6 @@
       >Start</button
     >
   {/if}
-  >
 </div>
 
 <style>
@@ -84,6 +94,14 @@
 
   .left {
     text-align: left;
+  }
+
+  .twitter-link {
+    position: absolute;
+    bottom: 32px;
+    left: 1em;
+    height: 13px;
+    width: 13px;
   }
 
   .centered-button {
