@@ -10,7 +10,7 @@
   const getRand = (max) => Math.random() * max * (Math.random() < 0.5 ? 1 : -1);
 
   const boidSim = createBoidSimulation({
-    numBoids: 150,
+    numBoids: 200,
     startPos: [() => $width / 2, () => $height / 2],
     startVel: [() => getRand(5), () => getRand(5)],
     boardSize: { w: $width, h: $height },
