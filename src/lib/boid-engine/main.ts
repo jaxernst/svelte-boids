@@ -21,7 +21,7 @@ const defaultAttrs = {
   separationFactor: 1,
   gravitationFactor: 0.8,
   alignmentFactor: 0.09,
-  frictionCoefficient: 0.985,
+  frictionCoefficient: 0.988,
   forceSmoothing: 20,
 };
 
