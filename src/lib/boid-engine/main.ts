@@ -131,14 +131,6 @@ export function createBoidSimulation({
   };
   boidType?: Partial<BoidAttrs>;
 }) {
-  if (boardSize.w < 650) {
-    cursorSettings.detractorDistance = 50;
-    defaultBoid.frictionCoefficient = 0.97;
-    defaultBoid.separationDistance = 20;
-    defaultBoid.sightRadius = 150;
-    defaultBoid.mass = 10;
-    defaultBoid.minV = 1;
-  }
   let boids = [...Array(numBoids)].map(() => ({
     ...defaultBoid,
     ...boidType,
