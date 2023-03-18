@@ -12,16 +12,16 @@ const boidVec: BoidVec = {
 
 const defaultAttrs = {
   mass: 1,
-  maxV: 600,
+  maxV: 650,
   minV: 58,
   sightRadius: 230,
   sightPeripheralDeg: 160,
   separationDistance: 50,
   gravitationDistance: 150,
   separationFactor: 1,
-  gravitationFactor: 0.795,
-  alignmentFactor: 0.095,
-  frictionCoefficient: 0.986,
+  gravitationFactor: 0.79,
+  alignmentFactor: 0.098,
+  frictionCoefficient: 0.989,
   forceSmoothing: 20,
 };
 
@@ -131,6 +131,12 @@ export function createBoidSimulation({
   };
   boidType?: Partial<BoidAttrs>;
 }) {
+  if (boardSize.w < 700) {
+    defaultBoid.maxV = 550;
+    defaultBoid.frictionCoefficient = 0.982;
+    cursorSettings.detractorDistance = 75;
+  }
+
   let boids = [...Array(numBoids)].map(() => ({
     ...defaultBoid,
     ...boidType,
