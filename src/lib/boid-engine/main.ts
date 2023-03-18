@@ -20,8 +20,8 @@ const defaultAttrs = {
   gravitationDistance: 150,
   separationFactor: 1,
   gravitationFactor: 0.795,
-  alignmentFactor: 0.091,
-  frictionCoefficient: 0.988,
+  alignmentFactor: 0.095,
+  frictionCoefficient: 0.986,
   forceSmoothing: 20,
 };
 
