@@ -10,19 +10,19 @@ const boidVec: BoidVec = {
   accel: [0, 0],
 };
 
-const defaultAttrs = {
-  mass: 1,
+const defaultAttrs: BoidAttrs = {
+  mass: 0.005,
   maxV: 650,
   minV: 58,
-  sightRadius: 230,
+  sightRadius: 210,
   sightPeripheralDeg: 160,
   separationDistance: 50,
-  gravitationDistance: 150,
-  separationFactor: 1,
+  separationFactor: 1.05,
   gravitationFactor: 0.79,
   alignmentFactor: 0.098,
   frictionCoefficient: 0.989,
   forceSmoothing: 20,
+  randomImpulses: [],
 };
 
 const defaultBoid = {
@@ -89,8 +89,12 @@ function update(
       );
     }
 
-    vec.accel[0] = force[0] / (boid.mass + 0.01);
-    vec.accel[1] = force[1] / (boid.mass + 0.01);
+    if (boid.randomImpulses.length > 0) {
+      boid.randomImpulses.forEach((impulse) => (force = add(force, impulse())));
+    }
+
+    vec.accel[0] = (force[0] * dt) / (boid.mass + 0.01);
+    vec.accel[1] = (force[1] * dt) / (boid.mass + 0.01);
 
     vec.vel[0] += vec.accel[0] * dt;
     vec.vel[1] += vec.accel[1] * dt;
@@ -148,6 +152,8 @@ export function createBoidSimulation({
   })) as Boid[];
 
   boids = boids.map((boid) => {
+    // Currently not using because the generator significantly impacts performance
+    // boid.randomImpulses = [RandomForceGenerator(0.00005, 20000, 1000)];
     boid.forceMovingAverage = makeMovingAverage(
       [0, 0],
       (boidType ?? defaultBoid).forceSmoothing
@@ -176,7 +182,7 @@ export function createBoidSimulation({
         boids = [...boids, addBoid()];
       }
 
-      // Apply queued boid 'behavoir' update
+      // Apply queued boid 'behavoir' updates
       for (let updateBoid of updateBoidQueue) {
         boids = boids.map((boid, i) => updateBoid(boid, i));
       }

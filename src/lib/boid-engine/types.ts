@@ -1,3 +1,5 @@
+import type { RandomForceGenerator } from "./main";
+
 export type Vec2D = [number, number];
 
 export type BoidVec = { pos: Vec2D; vel: Vec2D; accel: Vec2D };
@@ -18,6 +20,7 @@ export type BoidAttrs = {
   alignmentFactor: number;
   frictionCoefficient: number;
   forceSmoothing: number;
+  randomImpulses: (() => Vec2D)[];
 } & _BoidAttrs;
 
 // Additional functional attributes that can be injected to modify behavior
