@@ -33,3 +33,10 @@ export type BoidCanvasDraw = (
   vel: Vec2D,
   ctx: CanvasRenderingContext2D
 ) => {};
+
+export type Detractor = {
+  x: number;
+  y: number;
+  strength?: number;
+  distance?: number; // Distance that detractor starts apply force at
+};

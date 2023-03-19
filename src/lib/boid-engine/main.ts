@@ -1,6 +1,6 @@
 import { align, detract, gravitate, separate } from "./boid-functions";
 import { canvasArrow, drawPoint } from "./canvas-drawers";
-import type { Boid, BoidAttrs, BoidVec, Vec2D } from "./types";
+import type { Boid, BoidAttrs, BoidVec, Detractor, Vec2D } from "./types";
 import { findBoidsInSight, limitSpeed, makeMovingAverage } from "./sim-utils";
 import { add, magnitude, mul } from "./vectorMath";
 
@@ -30,17 +30,15 @@ const defaultBoid = {
   ...defaultAttrs,
 };
 
-const cursorSettings = {
-  detractorDistance: 100,
-  detractorStrength: 50000,
-};
+let defaultDetractorDistance = 100;
+let defaultDetractorStrength = 50000;
 
 // Main simulation loop updater
 function update(
   boids: Boid[],
   dt: number,
   board: { h: number; w: number },
-  cursor: Vec2D | undefined,
+  detractors: Detractor[] = [],
   ctx
 ) {
   let i = 0;
@@ -76,18 +74,17 @@ function update(
       force = boid.forceMovingAverage(force);
     }
 
-    // If cursor position, run away from the cursor
-    if (cursor) {
+    detractors.forEach((detractor) => {
       force = add(
         force,
         detract(
           boid,
-          cursor,
-          cursorSettings.detractorStrength,
-          cursorSettings.detractorDistance
+          [detractor.x, detractor.y],
+          detractor.strength ? detractor.strength : defaultDetractorStrength,
+          detractor.distance ? detractor.distance : defaultDetractorDistance
         )
       );
-    }
+    });
 
     if (boid.randomImpulses.length > 0) {
       boid.randomImpulses.forEach((impulse) => (force = add(force, impulse())));
@@ -138,7 +135,7 @@ export function createBoidSimulation({
   if (boardSize.w < 700) {
     defaultBoid.maxV = 550;
     defaultBoid.frictionCoefficient = 0.982;
-    cursorSettings.detractorDistance = 75;
+    defaultDetractorDistance = 75;
   }
 
   let boids = [...Array(numBoids)].map(() => ({
@@ -171,7 +168,7 @@ export function createBoidSimulation({
   return {
     update: (
       dt: number,
-      cursor: Vec2D,
+      detractors: { x: number; y: number }[],
       ctx: {
         htmlContext?: CanvasRenderingContext2D;
         visibleBoard?: { w: number; h: number };
@@ -192,7 +189,7 @@ export function createBoidSimulation({
         boids,
         dt,
         ctx.visibleBoard ?? board,
-        cursor,
+        detractors,
         ctx.htmlContext
       );
       return boids;

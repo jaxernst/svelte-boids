@@ -1,16 +1,23 @@
 <script lang="ts">
   import { height, renderable, width } from "./game";
   import { createBoidSimulation } from "./lib/boid-engine/main";
-  import { addBoid, cursorPos, forceSmoothing } from "./boidSimControls";
+  import {
+    addBoid,
+    cursorPos,
+    detractors,
+    forceSmoothing,
+  } from "./boidSimControls";
   import { onMount } from "svelte";
   import { MakeBoidDrawer } from "./lib/boid-engine/canvas-drawers";
+  import { get } from "svelte/store";
 
   export let started = false;
+  export let initNumBoids = 200;
 
   const getRand = (max) => Math.random() * max * (Math.random() < 0.5 ? 1 : -1);
 
   const boidSim = createBoidSimulation({
-    numBoids: 200,
+    numBoids: initNumBoids,
     startPos: [() => $width / 2, () => $height / 2],
     startVel: [() => getRand(5), () => getRand(50)],
     boardSize: { w: $width, h: $height },
@@ -38,13 +45,17 @@
     if (!started) return;
     const { context: ctx, width, height } = props;
 
-    const boids = boidSim.update(dt, $cursorPos, {
-      htmlContext: ctx,
-      visibleBoard: {
-        h: height,
-        w: width,
-      },
-    });
+    const boids = boidSim.update(
+      dt,
+      [$cursorPos].concat($detractors.map((d) => get(d))),
+      {
+        htmlContext: ctx,
+        visibleBoard: {
+          h: height,
+          w: width,
+        },
+      }
+    );
 
     for (const boid of boids) {
       drawBoid(boid.vec.pos, boid.vec.vel, ctx);
