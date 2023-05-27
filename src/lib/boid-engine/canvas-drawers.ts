@@ -52,7 +52,7 @@ export function canvasArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
 }
 
 export const MakeBoidDrawer = (size: number, color?: string) => {
-  return (pos, vel, ctx) => {
+  return (pos, vel, ctx, color?: string) => {
     // Calculate the magnitude of the velocity vector
     const magnitude = Math.sqrt(vel[0] ** 2 + vel[1] ** 2);
 
@@ -60,8 +60,6 @@ export const MakeBoidDrawer = (size: number, color?: string) => {
     const angle = Math.atan2(vel[1], vel[0]);
 
     const length = magnitude / 15;
-
-    // Set the fill color to red
     ctx.fillStyle = color ? color : "red";
 
     // Calculate the position of the vertices of the triangle based on the velocity vector

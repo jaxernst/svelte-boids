@@ -1,6 +1,6 @@
 import { align, detract, gravitate, separate } from "./boid-functions";
 import { canvasArrow, drawPoint } from "./canvas-drawers";
-import type { Boid, BoidAttrs, BoidVec, Vec2D } from "./types";
+import type { Boid, BoidAttrs, BoidVec, Detractor, Vec2D } from "./types";
 import { findBoidsInSight, limitSpeed, makeMovingAverage } from "./sim-utils";
 import { add, magnitude, mul } from "./vectorMath";
 
@@ -10,7 +10,7 @@ const boidVec: BoidVec = {
   accel: [0, 0],
 };
 
-const defaultAttrs: BoidAttrs = {
+export const defaultAttrs: BoidAttrs = {
   mass: 0.005,
   maxV: 650,
   minV: 58,
@@ -23,6 +23,7 @@ const defaultAttrs: BoidAttrs = {
   frictionCoefficient: 0.989,
   forceSmoothing: 20,
   randomImpulses: [],
+  color: "hsl(0, 100%, 50%)",
 };
 
 const defaultBoid = {
@@ -30,17 +31,15 @@ const defaultBoid = {
   ...defaultAttrs,
 };
 
-const cursorSettings = {
-  detractorDistance: 100,
-  detractorStrength: 50000,
-};
+let defaultDetractorDistance = 100;
+let defaultDetractorStrength = 50000;
 
 // Main simulation loop updater
-function update(
+function updateFrame(
   boids: Boid[],
   dt: number,
   board: { h: number; w: number },
-  cursor: Vec2D | undefined,
+  detractors: Detractor[] = [],
   ctx
 ) {
   let i = 0;
@@ -76,18 +75,17 @@ function update(
       force = boid.forceMovingAverage(force);
     }
 
-    // If cursor position, run away from the cursor
-    if (cursor) {
+    detractors.forEach((detractor) => {
       force = add(
         force,
         detract(
           boid,
-          cursor,
-          cursorSettings.detractorStrength,
-          cursorSettings.detractorDistance
+          [detractor.x, detractor.y],
+          detractor.strength ? detractor.strength : defaultDetractorStrength,
+          detractor.distance ? detractor.distance : defaultDetractorDistance
         )
       );
-    }
+    });
 
     if (boid.randomImpulses.length > 0) {
       boid.randomImpulses.forEach((impulse) => (force = add(force, impulse())));
@@ -135,10 +133,12 @@ export function createBoidSimulation({
   };
   boidType?: Partial<BoidAttrs>;
 }) {
+  let board = boardSize;
+
   if (boardSize.w < 700) {
     defaultBoid.maxV = 550;
     defaultBoid.frictionCoefficient = 0.982;
-    cursorSettings.detractorDistance = 75;
+    defaultDetractorDistance = 75;
   }
 
   let boids = [...Array(numBoids)].map(() => ({
@@ -161,40 +161,48 @@ export function createBoidSimulation({
     return boid;
   });
 
+  // Add new boids to the sim
   let addBoidQueue: (() => Boid)[] = [];
+  // Update existing boids in the sim
   let updateBoidQueue: ((
     attrs: Partial<BoidAttrs>,
     atIndex: number
   ) => Boid)[] = [];
-  let board = boardSize;
+
+  let detractors: Detractor[] = [];
 
   return {
+    reset: () => {
+      boids = [];
+      detractors = [];
+    },
     update: (
       dt: number,
-      cursor: Vec2D,
       ctx: {
         htmlContext?: CanvasRenderingContext2D;
         visibleBoard?: { w: number; h: number };
-      }
+      },
+      frameDetractors?: Detractor[]
     ) => {
       // Add boids from the queue
       for (let addBoid of addBoidQueue) {
         boids = [...boids, addBoid()];
       }
+      addBoidQueue = [];
 
       // Apply queued boid 'behavoir' updates
       for (let updateBoid of updateBoidQueue) {
         boids = boids.map((boid, i) => updateBoid(boid, i));
       }
 
-      addBoidQueue = [];
-      boids = update(
+      boids = updateFrame(
         boids,
         dt,
         ctx.visibleBoard ?? board,
-        cursor,
+        [...detractors, ...frameDetractors],
         ctx.htmlContext
       );
+
       return boids;
     },
     resizeBoard: (newBoard: { h: number; w: number }) => {
@@ -202,12 +210,14 @@ export function createBoidSimulation({
     },
     addBoid: (
       startPos: { x: number; y: number },
-      startVel: { x: number; y: number }
+      startVel: { x: number; y: number },
+      boidType?: Partial<BoidAttrs>
     ) => {
       const i = boids.length;
 
       addBoidQueue.push(() => ({
         ...defaultAttrs,
+        ...boidType,
         vec: {
           ...boidVec,
           pos: [startPos.x, startPos.y],
@@ -216,11 +226,14 @@ export function createBoidSimulation({
       }));
       return i;
     },
+    addDetractor: (detractor: Detractor) => {
+      detractors.push(detractor);
+    },
     updateBoids: (newAttrs: Partial<BoidAttrs>, atIndices?: number[]) => {
-      console.log("Udating");
       if (!atIndices) {
         atIndices = Array.from({ length: boids.length }, (_, i) => i);
       }
+
       updateBoidQueue.push((boid: Boid, boidIndex: number) => {
         if (atIndices.includes(boidIndex)) {
           return { ...boid, ...newAttrs };
@@ -228,5 +241,6 @@ export function createBoidSimulation({
         return boid;
       });
     },
+    getDetractors: () => detractors,
   };
 }

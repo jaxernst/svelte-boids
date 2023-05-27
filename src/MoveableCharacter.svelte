@@ -1,9 +1,13 @@
-<script>
+<script lang="ts">
   import { renderable, width, height } from "./game.js";
+  import type { Writable } from "svelte/store";
   import Text from "./Text.svelte";
   import vec2 from "gl-vec2";
   import { cursorPos } from "./boidSimControls";
 
+  export let storeToUpdate: null | Writable<{ x: number; y: number }> = null;
+
+  export let showPos = true;
   export let color = "#ffe554";
   export let size = 10;
   export let thickness = 3;
@@ -55,7 +59,9 @@
     position[0] = x;
     position[1] = y;
 
-    cursorPos.set([x, y]);
+    if (storeToUpdate) {
+      storeToUpdate.set({ x, y });
+    }
 
     context.lineCap = "round";
 
@@ -66,13 +72,15 @@
     context.arc(x, y, size, 0, Math.PI * 2);
     context.stroke();
 
-    // We use this to make sure the text is in sync with the character
-    // Because regular prop reactivity happens a frame too late
-    text.$set({
-      text: `(${position.map((n) => Math.round(n)).join(", ")})`,
-      x,
-      y: y + size + 10,
-    });
+    if (showPos) {
+      // We use this to make sure the text is in sync with the character
+      // Because regular prop reactivity happens a frame too late
+      text.$set({
+        text: `(${position.map((n) => Math.round(n)).join(", ")})`,
+        x,
+        y: y + size + 10,
+      });
+    }
   });
 
   function handleMouseMove({ clientX, clientY }) {
