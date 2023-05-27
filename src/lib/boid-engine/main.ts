@@ -11,8 +11,8 @@ const boidVec: BoidVec = {
 };
 
 export const defaultAttrs: BoidAttrs = {
-  mass: 0.005,
-  targetV: 200,
+  mass: 0.008,
+  targetV: 150,
   targetVCorrectionStrength: 0.01,
   sightRadius: 210,
   sightPeripheralDeg: 160,
