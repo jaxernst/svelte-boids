@@ -174,6 +174,14 @@
     display: flex;
     flex-direction: column;
     align-items: end;
-    gap: 1em;
+    gap: 0.8em;
+    font-size: 0.9em;
+  }
+
+  @media (max-width: 700px) {
+    .right-bar {
+      font-size: 0.6em;
+      gap: 0.6em;
+    }
   }
 </style>
