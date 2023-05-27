@@ -7,22 +7,35 @@
   import Text from "./Text.svelte";
   import FPS from "./FPS.svelte";
   import BoidSimulation from "./BoidSimulation.svelte";
-  import {
-    addBoid,
-    cursorPos,
-    detractors,
-    MakeDetractor,
-  } from "./boidSimControls.js";
-  import Switch from "./lib/svelte-components/Switch.svelte";
-  import { onMount } from "svelte";
-  import Slider from "@bulatdashiev/svelte-slider";
+  import { addBoids, boidSim, cursorPos } from "./boidSimControls.js";
   import TwitterLogo from "./lib/svelte-components/TwitterLogo.svelte";
   import Detractors from "./Detractors.svelte";
-  import { get } from "svelte/store";
+  import { randomizeBoidType } from "./lib/boid-engine/boid-creation.js";
+
+  let currentBoidType = randomizeBoidType();
+
+  $: console.log("New Species", currentBoidType);
 
   let started = false;
   $: command = $width > 700 ? "click" : "tap";
+
+  let addingDetractor = false;
+  let waitingForClick = false;
+  function maybeAddDetractor(event) {
+    if (!addingDetractor) return;
+    if (!waitingForClick) {
+      waitingForClick = true;
+      return;
+    }
+    const { clientX, clientY } = event;
+    $boidSim.addDetractor({ x: clientX, y: clientY });
+
+    addingDetractor = false;
+    waitingForClick = false;
+  }
 </script>
+
+<svelte:window on:click={maybeAddDetractor} />
 
 <div class="main">
   <Canvas>
@@ -30,7 +43,7 @@
       <DotGrid divisions={30} color="hsla(0, 0%, 100%, 0.5)" />
     </Background>
 
-    <BoidSimulation {started} initNumBoids={200} />
+    <BoidSimulation {started} initNumBoids={10} />
     <Character
       storeToUpdate={cursorPos}
       size={$width > 700 ? 10 : 7}
@@ -72,14 +85,16 @@
       </div>
       <div class="right-bar">
         {#if started}
-          <button on:click={() => null}>Reset</button>
-          <button on:click={() => $addBoid && $addBoid()}>Spawn</button>
-          <button
-            on:click={() => {
-              $detractors.push(MakeDetractor({ ...$cursorPos }));
-            }}>Add Detractor</button
+          <button on:click={() => $boidSim.reset()}>Reset</button>
+          <button on:click={() => $addBoids && $addBoids(currentBoidType, 10)}
+            >Spawn</button
           >
-          <button on:click={() => null}>New Species</button>
+          <button on:click={() => (currentBoidType = randomizeBoidType())}
+            >New Species</button
+          >
+          <button on:click={() => (addingDetractor = !addingDetractor)}
+            >{addingDetractor ? "Click to place" : "Add Detractor"}</button
+          >
           <!-- 
           <div style="font-size: 10px">
             <Switch bind:value={$forceSmoothing} label="" design="inner" />
