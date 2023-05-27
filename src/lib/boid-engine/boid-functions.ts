@@ -1,6 +1,5 @@
-import { canvasArrow, drawPoint } from "./canvas-drawers";
-import type { Boid } from "./main";
-import type { Vec2D } from "./types";
+import { drawPoint } from "./canvas-drawers";
+import type { Boid, Vec2D } from "./types";
 import { distance, dot, mul, norm, subtract, magnitude } from "./vectorMath";
 
 /** Forcing / boid perception functions */

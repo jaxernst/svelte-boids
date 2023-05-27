@@ -8,15 +8,14 @@ export type Boid = {
 
 export type BoidAttrs = {
   mass: number;
-  maxV: number;
-  minV: number;
+  targetV: number;
+  targetVCorrectionStrength: number;
   sightRadius: number;
   sightPeripheralDeg: number;
   separationDistance: number;
   separationFactor: number;
   gravitationFactor: number;
   alignmentFactor: number;
-  frictionCoefficient: number;
   forceSmoothing: number;
   randomImpulses: (() => Vec2D)[];
   color: string;

@@ -12,15 +12,14 @@ const boidVec: BoidVec = {
 
 export const defaultAttrs: BoidAttrs = {
   mass: 0.005,
-  maxV: 650,
-  minV: 58,
+  targetV: 200,
+  targetVCorrectionStrength: 0.01,
   sightRadius: 210,
   sightPeripheralDeg: 160,
   separationDistance: 50,
   separationFactor: 1.05,
   gravitationFactor: 0.79,
   alignmentFactor: 0.098,
-  frictionCoefficient: 0.989,
   forceSmoothing: 20,
   randomImpulses: [],
   color: "hsl(0, 100%, 50%)",
@@ -31,6 +30,7 @@ const defaultBoid = {
   ...defaultAttrs,
 };
 
+const maxGlobalSpeed = 1000;
 let defaultDetractorDistance = 100;
 let defaultDetractorStrength = 50000;
 
@@ -58,20 +58,10 @@ function updateFrame(
         boid.separationFactor
       );
 
-      /*console.log(
-        "g:",
-        magnitude(gForce),
-        "s:",
-        magnitude(sForce),
-        "a:",
-        magnitude(aForce)
-      ); */
-
       force = add(force, gForce, aForce, sForce);
     }
 
     if (boid.forceSmoothing > 0 && boid.forceMovingAverage) {
-      let x = force[0];
       force = boid.forceMovingAverage(force);
     }
 
@@ -91,15 +81,22 @@ function updateFrame(
       boid.randomImpulses.forEach((impulse) => (force = add(force, impulse())));
     }
 
-    vec.accel[0] = (force[0] * dt) / (boid.mass + 0.01);
-    vec.accel[1] = (force[1] * dt) / (boid.mass + 0.01);
+    vec.accel[0] = (force[0] * dt) / (boid.mass + 0.0001);
+    vec.accel[1] = (force[1] * dt) / (boid.mass + 0.0001);
 
     vec.vel[0] += vec.accel[0] * dt;
     vec.vel[1] += vec.accel[1] * dt;
 
-    vec.vel[0] *= boid.frictionCoefficient;
-    vec.vel[1] *= boid.frictionCoefficient;
-    vec.vel = limitSpeed(boid);
+    const speed = magnitude(vec.vel);
+
+    vec.vel[0] +=
+      ((boid.targetV - speed) * boid.targetVCorrectionStrength * vec.vel[0]) /
+      speed;
+    vec.vel[1] +=
+      ((boid.targetV - speed) * boid.targetVCorrectionStrength * vec.vel[1]) /
+      speed;
+
+    vec.vel = limitSpeed(boid, maxGlobalSpeed);
 
     vec.pos[0] += vec.vel[0] * dt;
     vec.pos[1] += vec.vel[1] * dt;
@@ -136,8 +133,6 @@ export function createBoidSimulation({
   let board = boardSize;
 
   if (boardSize.w < 700) {
-    defaultBoid.maxV = 550;
-    defaultBoid.frictionCoefficient = 0.982;
     defaultDetractorDistance = 75;
   }
 

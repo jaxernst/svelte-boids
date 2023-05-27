@@ -46,13 +46,17 @@ export const RandomForceGenerator = (
   };
 };
 
-export function limitSpeed(boid: Boid) {
+export function limitSpeed(
+  boid: Boid,
+  speedLimit: number,
+  speedFloor?: number
+) {
   const speed = magnitude(boid.vec.vel);
-  if (speed > boid.maxV) {
-    return mul(div(boid.vec.vel, speed), boid.maxV);
+  if (speed > speedLimit) {
+    return mul(div(boid.vec.vel, speed), speedLimit);
   }
-  if (speed < boid.minV) {
-    return mul(div(boid.vec.vel, speed), boid.minV);
+  if (speedFloor && speed < speedFloor) {
+    return mul(div(boid.vec.vel, speed), speedFloor);
   }
   return boid.vec.vel;
 }
