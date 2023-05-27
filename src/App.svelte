@@ -11,8 +11,10 @@
   import TwitterLogo from "./lib/svelte-components/TwitterLogo.svelte";
   import Detractors from "./Detractors.svelte";
   import { randomizeBoidType } from "./lib/boid-engine/boid-creation.js";
+  import { defaultAttrs } from "./lib/boid-engine/main.js";
+  import type { BoidAttrs } from "./lib/boid-engine/types.js";
 
-  let currentBoidType = randomizeBoidType();
+  let currentBoidType: Partial<BoidAttrs> = defaultAttrs;
 
   $: console.log("New Species", currentBoidType);
 
