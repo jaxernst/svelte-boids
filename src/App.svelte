@@ -85,16 +85,21 @@
       </div>
       <div class="right-bar">
         {#if started}
-          <button on:click={() => $boidSim.reset()}>Reset</button>
+          <button
+            style="display:flex; gap:.5em; align-items:center"
+            on:click={() => (currentBoidType = randomizeBoidType())}
+            >Randomize Species {" "}
+            <div
+              style={`background-color: ${currentBoidType.color}; height:15px; width:15px; border-radius:100%; display:inline-block;`}
+            /></button
+          >
           <button on:click={() => $addBoids && $addBoids(currentBoidType, 10)}
             >Spawn</button
-          >
-          <button on:click={() => (currentBoidType = randomizeBoidType())}
-            >New Species</button
           >
           <button on:click={() => (addingDetractor = !addingDetractor)}
             >{addingDetractor ? "Click to place" : "Add Detractor"}</button
           >
+          <button on:click={() => $boidSim.reset()}>Reset</button>
           <!-- 
           <div style="font-size: 10px">
             <Switch bind:value={$forceSmoothing} label="" design="inner" />
