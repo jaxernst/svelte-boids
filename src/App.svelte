@@ -217,8 +217,8 @@
 
   @media (max-width: 700px) {
     .right-bar {
-      font-size: 0.7em;
-      gap: 0.6em;
+      font-size: 0.65em;
+      gap: 0.5em;
     }
   }
 
