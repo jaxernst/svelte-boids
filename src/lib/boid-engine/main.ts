@@ -13,7 +13,7 @@ const boidVec: BoidVec = {
 export const defaultAttrs: BoidAttrs = {
   mass: 0.008,
   targetV: 150,
-  targetVCorrectionStrength: 0.01,
+  targetVCorrectionStrength: 0.02,
   sightRadius: 210,
   sightPeripheralDeg: 160,
   separationDistance: 50,
@@ -31,6 +31,7 @@ const defaultBoid = {
 };
 
 const maxGlobalSpeed = 1000;
+let targetValueScalar = 1;
 let defaultDetractorDistance = 100;
 let defaultDetractorStrength = 50000;
 
@@ -88,12 +89,17 @@ function updateFrame(
     vec.vel[1] += vec.accel[1] * dt;
 
     const speed = magnitude(vec.vel);
-
+    const targetVAdjusted = boid.targetV * targetValueScalar;
+    console.log(targetVAdjusted, speed, boid.targetVCorrectionStrength);
     vec.vel[0] +=
-      ((boid.targetV - speed) * boid.targetVCorrectionStrength * vec.vel[0]) /
+      ((targetVAdjusted - speed) *
+        boid.targetVCorrectionStrength *
+        vec.vel[0]) /
       speed;
     vec.vel[1] +=
-      ((boid.targetV - speed) * boid.targetVCorrectionStrength * vec.vel[1]) /
+      ((targetVAdjusted - speed) *
+        boid.targetVCorrectionStrength *
+        vec.vel[1]) /
       speed;
 
     vec.vel = limitSpeed(boid, maxGlobalSpeed);
@@ -134,7 +140,7 @@ export function createBoidSimulation({
 
   if (boardSize.w < 700) {
     defaultDetractorDistance = 75;
-    boidType = { ...boidType, targetV: 100 };
+    targetValueScalar = 0.7;
   }
 
   let boids = [...Array(numBoids)].map(() => ({
