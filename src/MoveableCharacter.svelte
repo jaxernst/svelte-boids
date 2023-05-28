@@ -130,13 +130,15 @@
 </script>
 
 <svelte:window
-  on:touchstart={handleTouchStart}
-  on:touchend={handleTouchEnd}
-  on:touchcancel={handleTouchEnd}
-  on:touchmove={handleTouchMove}
-  on:mousedown={handleMouseDown}
-  on:mouseup={handleMouseUp}
-  on:mousemove={handleMouseMove}
+on:touchstart={handleTouchStart}
+on:touchend={handleTouchEnd}
+on:touchcancel={handleTouchEnd}
+on:touchmove={handleTouchMove}
+on:mousedown={handleMouseDown}
+on:mouseup={handleMouseUp}
+on:mousemove={handleMouseMove}
+on:selectstart={(e) => e.preventDefault()} // Prevents text selection on Safari
+on:contextmenu={(e) => e.preventDefault()} // Prevents context menu on Safari
 />
 
 <Text fontSize={8} baseline="top" bind:this={text} />
