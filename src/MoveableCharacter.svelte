@@ -94,8 +94,8 @@
     const touchEvent = e.targetTouches[0];
     if (touchEvent) {
       touch = [touchEvent.clientX, touchEvent.clientY];
-      touchActive = false;
     }
+    touchActive = false;
   }
 
   function handleTouchMove(e) {
@@ -130,15 +130,13 @@
 </script>
 
 <svelte:window
-on:touchstart={handleTouchStart}
-on:touchend={handleTouchEnd}
-on:touchcancel={handleTouchEnd}
-on:touchmove={handleTouchMove}
-on:mousedown={handleMouseDown}
-on:mouseup={handleMouseUp}
-on:mousemove={handleMouseMove}
-on:selectstart={(e) => e.preventDefault()} // Prevents text selection on Safari
-on:contextmenu={(e) => e.preventDefault()} // Prevents context menu on Safari
+  on:touchstart|preventDefault={handleTouchStart}
+  on:touchend|preventDefault={handleTouchEnd}
+  on:touchcancel={handleTouchEnd}
+  on:touchmove|preventDefault={handleTouchMove}
+  on:mousedown={handleMouseDown}
+  on:mouseup={handleMouseUp}
+  on:mousemove={handleMouseMove}
 />
 
 <Text fontSize={8} baseline="top" bind:this={text} />
