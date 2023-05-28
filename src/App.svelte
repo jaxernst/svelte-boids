@@ -52,7 +52,6 @@
   }
 
   function toggleDetractorPen() {
-    characterPaused = !characterPaused;
     addingDetractor = !addingDetractor;
     waitingForClick = false;
   }
