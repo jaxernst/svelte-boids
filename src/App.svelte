@@ -109,6 +109,9 @@
       </div>
       <div class="right-bar">
         {#if started}
+          <button use:characterPause on:click={() => $boidSim.reset()}
+            >Reset</button
+          >
           <button
             style="display:flex; gap:.5em; align-items:center"
             use:characterPause
@@ -129,9 +132,7 @@
             class:purple-bg={addingDetractor}
             >{addingDetractor ? "Adding Detractors" : "Add Detractors"}</button
           >
-          <button use:characterPause on:click={() => $boidSim.reset()}
-            >Reset</button
-          >
+
           <!-- 
           <div style="font-size: 10px">
             <Switch bind:value={$forceSmoothing} label="" design="inner" />
