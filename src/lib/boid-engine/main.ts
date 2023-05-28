@@ -90,7 +90,7 @@ function updateFrame(
 
     const speed = magnitude(vec.vel);
     const targetVAdjusted = boid.targetV * targetValueScalar;
-    console.log(targetVAdjusted, speed, boid.targetVCorrectionStrength);
+
     vec.vel[0] +=
       ((targetVAdjusted - speed) *
         boid.targetVCorrectionStrength *

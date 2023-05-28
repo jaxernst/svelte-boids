@@ -31,9 +31,6 @@
     }
     const { clientX, clientY } = event;
     $boidSim.addDetractor({ x: clientX, y: clientY });
-
-    addingDetractor = false;
-    waitingForClick = false;
   }
 
   let characterPaused = false;
@@ -52,6 +49,12 @@
         node.removeEventListener("touchend", onRelease);
       },
     };
+  }
+
+  function toggleDetractorPen() {
+    characterPaused = !characterPaused;
+    addingDetractor = !addingDetractor;
+    waitingForClick = false;
   }
 </script>
 
@@ -122,8 +125,9 @@
           >
           <button
             use:characterPause
-            on:click={() => (addingDetractor = !addingDetractor)}
-            >{addingDetractor ? "Click to place" : "Add Detractor"}</button
+            on:click={toggleDetractorPen}
+            class:purple-bg={addingDetractor}
+            >{addingDetractor ? "Adding Detractors" : "Add Detractors"}</button
           >
           <button use:characterPause on:click={() => $boidSim.reset()}
             >Reset</button
@@ -213,8 +217,12 @@
 
   @media (max-width: 700px) {
     .right-bar {
-      font-size: 0.6em;
+      font-size: 0.7em;
       gap: 0.6em;
     }
+  }
+
+  .purple-bg {
+    background-color: #a55bd7;
   }
 </style>
