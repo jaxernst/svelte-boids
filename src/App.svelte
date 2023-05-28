@@ -35,6 +35,24 @@
     addingDetractor = false;
     waitingForClick = false;
   }
+
+  let characterPaused = false;
+  function characterPause(node) {
+    const onPress = () => (characterPaused = true);
+    const onRelease = () => (characterPaused = false);
+    node.addEventListener("mousedown", onPress);
+    node.addEventListener("mouseup", onRelease);
+    node.addEventListener("touchstart", onPress);
+    node.addEventListener("touchend", onRelease);
+    return {
+      destroy() {
+        node.removeEventListener("mousedown", onPress);
+        node.removeEventListener("mouseup", onRelease);
+        node.removeEventListener("touchstart", onPress);
+        node.removeEventListener("touchend", onRelease);
+      },
+    };
+  }
 </script>
 
 <svelte:window on:click={maybeAddDetractor} />
@@ -45,7 +63,7 @@
       <DotGrid divisions={30} color="hsla(0, 0%, 100%, 0.5)" />
     </Background>
 
-    <BoidSimulation {started} initNumBoids={10} />
+    <BoidSimulation {started} initNumBoids={25} />
     <Character
       storeToUpdate={cursorPos}
       size={$width > 700 ? 10 : 7}
@@ -53,6 +71,7 @@
       maxVelocity={$width > 700 ? 9 : 6}
       startX={$width / 2}
       startY={$height / 1.6}
+      {characterPaused}
     />
     <Detractors />
     <div class="big-screen-only">
@@ -89,19 +108,26 @@
         {#if started}
           <button
             style="display:flex; gap:.5em; align-items:center"
+            use:characterPause
             on:click={() => (currentBoidType = randomizeBoidType())}
             >Randomize Species {" "}
             <div
               style={`background-color: ${currentBoidType.color}; height:15px; width:15px; border-radius:100%; display:inline-block;`}
             /></button
           >
-          <button on:click={() => $addBoids && $addBoids(currentBoidType, 10)}
+          <button
+            use:characterPause
+            on:click={() => $addBoids && $addBoids(currentBoidType, 10)}
             >Spawn</button
           >
-          <button on:click={() => (addingDetractor = !addingDetractor)}
+          <button
+            use:characterPause
+            on:click={() => (addingDetractor = !addingDetractor)}
             >{addingDetractor ? "Click to place" : "Add Detractor"}</button
           >
-          <button on:click={() => $boidSim.reset()}>Reset</button>
+          <button use:characterPause on:click={() => $boidSim.reset()}
+            >Reset</button
+          >
           <!-- 
           <div style="font-size: 10px">
             <Switch bind:value={$forceSmoothing} label="" design="inner" />

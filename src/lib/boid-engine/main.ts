@@ -134,6 +134,7 @@ export function createBoidSimulation({
 
   if (boardSize.w < 700) {
     defaultDetractorDistance = 75;
+    boidType = { ...boidType, targetV: 100 };
   }
 
   let boids = [...Array(numBoids)].map(() => ({
