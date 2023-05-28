@@ -57,7 +57,7 @@
   }
 </script>
 
-<svelte:window on:click={maybeAddDetractor} />
+<svelte:window on:click={maybeAddDetractor} on:touchstart={maybeAddDetractor} />
 
 <div class="main">
   <Canvas>
