@@ -11,14 +11,14 @@ const boidVec: BoidVec = {
 };
 
 export const defaultAttrs: BoidAttrs = {
-  mass: 0.008,
-  targetV: 150,
+  mass: 0.007,
+  targetV: 110,
   targetVCorrectionStrength: 0.02,
   sightRadius: 210,
   sightPeripheralDeg: 160,
-  separationDistance: 50,
+  separationDistance: 30,
   separationFactor: 1.05,
-  gravitationFactor: 0.79,
+  gravitationFactor: 0.85,
   alignmentFactor: 0.098,
   forceSmoothing: 20,
   randomImpulses: [],
@@ -140,7 +140,7 @@ export function createBoidSimulation({
 
   if (boardSize.w < 700) {
     defaultDetractorDistance = 75;
-    targetValueScalar = 0.7;
+    targetValueScalar = 0.4;
   }
 
   let boids = [...Array(numBoids)].map(() => ({
