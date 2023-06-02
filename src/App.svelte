@@ -72,7 +72,7 @@
       moveSpeed={0.7}
       maxVelocity={$width > 700 ? 9 : 6}
       startX={$width / 2}
-      startY={$height / 1.6}
+      startY={$height / 1.1}
       {characterPaused}
     />
     <Detractors />

@@ -12,13 +12,13 @@ const boidVec: BoidVec = {
 export const defaultAttrs: BoidAttrs = {
   mass: 0.3e-4,
   targetV: 140,
-  maxV: 800,
+  maxV: 600,
   targetVCorrectionFactor: 0.5,
   sightRadius: 200,
   sightPeripheralDeg: 200,
   separationDistance: 30,
-  separationFactor: 1,
-  gravitationFactor: 0.6,
+  separationFactor: 0.5,
+  gravitationFactor: 0.4,
   alignmentFactor: 0.1,
   forceSmoothing: 20,
   randomImpulses: [],
@@ -31,7 +31,7 @@ const defaultBoid = {
 };
 
 const maxGlobalSpeed = 1000;
-let defaultDetractorDistance = 100;
+let defaultDetractorDistance = 200;
 let defaultDetractorStrength = 40000;
 let speedScalar = 1;
 

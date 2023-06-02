@@ -5,15 +5,15 @@ type MinMax<T> = {
 };
 
 const attributeRanges: MinMax<Partial<BoidAttrs>> = {
-  mass: [1e-5, 0.1e-3],
+  mass: [1e-5, 1e-4],
   targetV: [5, 400],
   targetVCorrectionFactor: [0.05, 5],
   sightRadius: [50, 500],
-  sightPeripheralDeg: [80, 360],
+  sightPeripheralDeg: [140, 360],
   separationDistance: [10, 200],
-  separationFactor: [0.1, 2],
-  gravitationFactor: [0.1, 2],
-  alignmentFactor: [0.05, 1.5],
+  separationFactor: [0.01, 1.2],
+  gravitationFactor: [0.01, 1.5],
+  alignmentFactor: [0.05, 0.5],
   forceSmoothing: [10, 100],
 };
 
