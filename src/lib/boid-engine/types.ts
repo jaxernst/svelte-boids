@@ -9,6 +9,7 @@ export type Boid = {
 export type BoidAttrs = {
   mass: number;
   targetV: number;
+  maxV: number;
   targetVCorrectionFactor: number;
   sightRadius: number;
   sightPeripheralDeg: number;

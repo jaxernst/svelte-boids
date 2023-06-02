@@ -10,13 +10,14 @@ const boidVec: BoidVec = {
 };
 
 export const defaultAttrs: BoidAttrs = {
-  mass: 0.2e-4,
+  mass: 0.3e-4,
   targetV: 140,
-  targetVCorrectionFactor: 1,
+  maxV: 800,
+  targetVCorrectionFactor: 0.5,
   sightRadius: 200,
-  sightPeripheralDeg: 160,
+  sightPeripheralDeg: 200,
   separationDistance: 30,
-  separationFactor: 1.5,
+  separationFactor: 1,
   gravitationFactor: 0.6,
   alignmentFactor: 0.1,
   forceSmoothing: 20,
@@ -31,11 +32,12 @@ const defaultBoid = {
 
 const maxGlobalSpeed = 1000;
 let defaultDetractorDistance = 100;
-let defaultDetractorStrength = 50000;
+let defaultDetractorStrength = 40000;
+let speedScalar = 1;
 
 function brakingForce(boid: Boid) {
   const currentV = boid.vec.vel;
-  const targetSpeed = boid.targetV;
+  const targetSpeed = boid.targetV * speedScalar;
 
   const speed = magnitude(currentV);
   const angle = Math.atan2(currentV[1], currentV[0]);
@@ -105,7 +107,7 @@ function updateFrame(
     vec.vel[0] += vec.accel[0] * dt;
     vec.vel[1] += vec.accel[1] * dt;
 
-    vec.vel = limitSpeed(boid, maxGlobalSpeed, 40);
+    vec.vel = limitSpeed(boid, Math.min(maxGlobalSpeed, boid.maxV), 40);
 
     vec.pos[0] += vec.vel[0] * dt;
     vec.pos[1] += vec.vel[1] * dt;
@@ -143,6 +145,7 @@ export function createBoidSimulation({
 
   if (boardSize.w < 700) {
     defaultDetractorDistance = 75;
+    speedScalar = 0.8;
   }
 
   let boids = [...Array(numBoids)].map(() => ({
@@ -174,7 +177,6 @@ export function createBoidSimulation({
   ) => Boid)[] = [];
 
   let detractors: Detractor[] = [];
-  let tLast = performance.now();
 
   return {
     reset: () => {
