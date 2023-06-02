@@ -5,16 +5,16 @@ type MinMax<T> = {
 };
 
 const attributeRanges: MinMax<Partial<BoidAttrs>> = {
-  mass: [0.0001, 0.01],
-  targetV: [5, 300],
-  targetVCorrectionStrength: [0.001, 0.1],
+  mass: [0.5e-5, 0.1e-3],
+  targetV: [5, 500],
+  targetVCorrectionFactor: [0.05, 5],
   sightRadius: [50, 500],
   sightPeripheralDeg: [80, 360],
-  separationDistance: [10, 200],
-  separationFactor: [0.1, 1.5],
-  gravitationFactor: [0.1, 2.5],
-  alignmentFactor: [0.05, 0.3],
-  forceSmoothing: [1, 25],
+  separationDistance: [10, 250],
+  separationFactor: [0.1, 5],
+  gravitationFactor: [0.1, 2],
+  alignmentFactor: [0.05, 2],
+  forceSmoothing: [10, 100],
 };
 
 export const randomizeBoidType = () => {

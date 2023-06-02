@@ -65,14 +65,14 @@ export function findBoidsInSight(boid: Boid, others: Boid[]) {
   const bVec = boid.vec;
   const directionNorm = norm(boid.vec.vel);
 
+  const TOO_RAD = Math.PI / 360;
   return others.filter((other) => {
     if (distance(bVec.pos, other.vec.pos) > boid.sightRadius) {
       return false;
     }
-
     const toOtherNorm = norm(subtract(other.vec.pos, bVec.pos));
     const angleRad = Math.acos(dot(directionNorm, toOtherNorm));
-    return angleRad < ((boid.sightPeripheralDeg / 2) * Math.PI) / 180;
+    return angleRad < boid.sightPeripheralDeg * TOO_RAD;
   });
 }
 

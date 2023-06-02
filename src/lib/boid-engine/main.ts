@@ -1,8 +1,7 @@
-import { align, detract, gravitate, separate } from "./boid-functions";
-import { canvasArrow, drawPoint } from "./canvas-drawers";
+import { combinedBoidRules, detract } from "./boid-functions";
 import type { Boid, BoidAttrs, BoidVec, Detractor, Vec2D } from "./types";
 import { findBoidsInSight, limitSpeed, makeMovingAverage } from "./sim-utils";
-import { add, magnitude, mul } from "./vectorMath";
+import { add, magnitude, mul, norm } from "./vectorMath";
 
 const boidVec: BoidVec = {
   pos: [0, 0],
@@ -11,15 +10,15 @@ const boidVec: BoidVec = {
 };
 
 export const defaultAttrs: BoidAttrs = {
-  mass: 0.007,
-  targetV: 110,
-  targetVCorrectionStrength: 0.02,
-  sightRadius: 210,
+  mass: 0.2e-4,
+  targetV: 140,
+  targetVCorrectionFactor: 1,
+  sightRadius: 200,
   sightPeripheralDeg: 160,
   separationDistance: 30,
-  separationFactor: 1.05,
-  gravitationFactor: 0.85,
-  alignmentFactor: 0.098,
+  separationFactor: 1.5,
+  gravitationFactor: 0.6,
+  alignmentFactor: 0.1,
   forceSmoothing: 20,
   randomImpulses: [],
   color: "hsl(0, 100%, 50%)",
@@ -31,9 +30,32 @@ const defaultBoid = {
 };
 
 const maxGlobalSpeed = 1000;
-let targetValueScalar = 1;
 let defaultDetractorDistance = 100;
 let defaultDetractorStrength = 50000;
+
+function brakingForce(boid: Boid) {
+  const currentV = boid.vec.vel;
+  const targetSpeed = boid.targetV;
+
+  const speed = magnitude(currentV);
+  const angle = Math.atan2(currentV[1], currentV[0]);
+  const targetX = Math.cos(angle) * targetSpeed;
+  const targetY = Math.sin(angle) * targetSpeed;
+
+  const velocityDifference: Vec2D = [
+    targetX - currentV[0],
+    targetY - currentV[1],
+  ];
+
+  const brakingForceMagnitude = magnitude(velocityDifference);
+  const direction = mul(
+    norm([-currentV[0], -currentV[1]]),
+    speed > targetSpeed ? 1 : -1
+  );
+
+  const brakingForce = mul(direction, brakingForceMagnitude);
+  return mul(brakingForce, boid.targetVCorrectionFactor);
+}
 
 // Main simulation loop updater
 function updateFrame(
@@ -52,18 +74,7 @@ function updateFrame(
 
     let force = [0, 0] as Vec2D;
     if (others.length > 0) {
-      const gForce = mul(gravitate(boid, others, ctx), boid.gravitationFactor);
-      const aForce = mul(align(boid, others, ctx), boid.alignmentFactor);
-      const sForce = mul(
-        separate(boid, others, board.w),
-        boid.separationFactor
-      );
-
-      force = add(force, gForce, aForce, sForce);
-    }
-
-    if (boid.forceSmoothing > 0 && boid.forceMovingAverage) {
-      force = boid.forceMovingAverage(force);
+      force = combinedBoidRules(boid, others, ctx, board.w);
     }
 
     detractors.forEach((detractor) => {
@@ -82,27 +93,19 @@ function updateFrame(
       boid.randomImpulses.forEach((impulse) => (force = add(force, impulse())));
     }
 
-    vec.accel[0] = (force[0] * dt) / (boid.mass + 0.0001);
-    vec.accel[1] = (force[1] * dt) / (boid.mass + 0.0001);
+    force = add(force, brakingForce(boid));
+
+    if (boid.forceSmoothing > 0 && boid.forceMovingAverage) {
+      force = boid.forceMovingAverage(force);
+    }
+
+    vec.accel[0] = (force[0] * dt * dt) / (boid.mass + 0.000001);
+    vec.accel[1] = (force[1] * dt * dt) / (boid.mass + 0.000001);
 
     vec.vel[0] += vec.accel[0] * dt;
     vec.vel[1] += vec.accel[1] * dt;
 
-    const speed = magnitude(vec.vel);
-    const targetVAdjusted = boid.targetV * targetValueScalar;
-
-    vec.vel[0] +=
-      ((targetVAdjusted - speed) *
-        boid.targetVCorrectionStrength *
-        vec.vel[0]) /
-      speed;
-    vec.vel[1] +=
-      ((targetVAdjusted - speed) *
-        boid.targetVCorrectionStrength *
-        vec.vel[1]) /
-      speed;
-
-    vec.vel = limitSpeed(boid, maxGlobalSpeed);
+    vec.vel = limitSpeed(boid, maxGlobalSpeed, 40);
 
     vec.pos[0] += vec.vel[0] * dt;
     vec.pos[1] += vec.vel[1] * dt;
@@ -140,7 +143,6 @@ export function createBoidSimulation({
 
   if (boardSize.w < 700) {
     defaultDetractorDistance = 75;
-    targetValueScalar = 0.4;
   }
 
   let boids = [...Array(numBoids)].map(() => ({
@@ -172,6 +174,7 @@ export function createBoidSimulation({
   ) => Boid)[] = [];
 
   let detractors: Detractor[] = [];
+  let tLast = performance.now();
 
   return {
     reset: () => {
@@ -192,11 +195,12 @@ export function createBoidSimulation({
       }
       addBoidQueue = [];
 
-      // Apply queued boid 'behavoir' updates
+      // Apply behavoir and attribute updates
       for (let updateBoid of updateBoidQueue) {
         boids = boids.map((boid, i) => updateBoid(boid, i));
       }
 
+      // make boids go brr
       boids = updateFrame(
         boids,
         dt,

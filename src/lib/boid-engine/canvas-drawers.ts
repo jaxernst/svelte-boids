@@ -51,34 +51,42 @@ export function canvasArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
   ctx.restore();
 }
 
-export const MakeBoidDrawer = (size: number, color?: string) => {
-  return (pos, vel, ctx, color?: string) => {
-    // Calculate the magnitude of the velocity vector
-    const magnitude = Math.sqrt(vel[0] ** 2 + vel[1] ** 2);
-
-    // Calculate the angle between the velocity vector and the x-axis
+export const MakeBoidDrawer = (size: number) => {
+  return (
+    pos: [number, number],
+    vel: [number, number],
+    ctx: CanvasRenderingContext2D,
+    color?: string
+  ) => {
+    const magnitude = Math.hypot(vel[0], vel[1]);
     const angle = Math.atan2(vel[1], vel[0]);
 
     const length = magnitude / 15;
-    ctx.fillStyle = color ? color : "red";
+    const angle120 = (2 * Math.PI) / 3;
+    const angle240 = (4 * Math.PI) / 3;
 
-    // Calculate the position of the vertices of the triangle based on the velocity vector
-    // Thanks chat gpt
-    const x1 = pos[0] + length * Math.cos(angle);
-    const y1 = pos[1] + length * Math.sin(angle);
-    const x2 = pos[0] + size * Math.cos(angle + (2 * Math.PI) / 3);
-    const y2 = pos[1] + size * Math.sin(angle + (2 * Math.PI) / 3);
-    const x3 = pos[0] + size * Math.cos(angle + (4 * Math.PI) / 3);
-    const y3 = pos[1] + size * Math.sin(angle + (4 * Math.PI) / 3);
+    const cosAngle = Math.cos(angle);
+    const sinAngle = Math.sin(angle);
 
-    // Begin drawing the triangle
+    const x1 = pos[0] + length * cosAngle;
+    const y1 = pos[1] + length * sinAngle;
+
+    const cosAngle120 = Math.cos(angle + angle120);
+    const sinAngle120 = Math.sin(angle + angle120);
+    const x2 = pos[0] + size * cosAngle120;
+    const y2 = pos[1] + size * sinAngle120;
+
+    const cosAngle240 = Math.cos(angle + angle240);
+    const sinAngle240 = Math.sin(angle + angle240);
+    const x3 = pos[0] + size * cosAngle240;
+    const y3 = pos[1] + size * sinAngle240;
+
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.lineTo(x3, y3);
     ctx.closePath();
-
-    // Fill the triangle with the current fill color
     ctx.fill();
   };
 };

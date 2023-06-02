@@ -43,3 +43,9 @@ export const averageVectors = (vs: Vec2D[]) => {
   let vSum = vs.reduce((sum, v) => [sum[0] + v[0], sum[1] + v[1]], [0, 0]);
   return [vSum[0] / vs.length, vSum[1] / vs.length] as Vec2D;
 };
+
+export const distanceSquared = (v1: Vec2D, v2: Vec2D) => {
+  const dx = v1[0] - v2[0];
+  const dy = v1[1] - v2[1];
+  return dx * dx + dy * dy;
+};
