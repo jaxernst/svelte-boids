@@ -1,30 +1,54 @@
 import type { BoidAttrs } from "./types";
 
-type MinMax<T> = {
-  [K in keyof T]: [T[K], T[K]];
+export type AttributeRange = {
+  min: number;
+  max: number;
+  mean?: number;
+  stdev?: number;
+  skew?: number;
 };
 
-const attributeRanges: MinMax<Partial<BoidAttrs>> = {
-  mass: [1e-5, 1e-4],
-  targetV: [5, 400],
-  targetVCorrectionFactor: [0.05, 5],
-  sightRadius: [50, 500],
-  sightPeripheralDeg: [140, 360],
-  separationDistance: [10, 200],
-  separationFactor: [0.01, 1.2],
-  gravitationFactor: [0.01, 1.5],
-  alignmentFactor: [0.05, 0.5],
-  forceSmoothing: [10, 100],
+type AttributeProbabilityDistribution<T> = {
+  [K in keyof T]: AttributeRange;
 };
 
-export const randomizeBoidType = () => {
+const attributeRanges: AttributeProbabilityDistribution<Partial<BoidAttrs>> = {
+  mass: { min: 0.05, max: 1, mean: 0.3, stdev: 0.3, skew: 0 },
+  targetV: { min: 5, max: 400, mean: 200, stdev: 100, skew: 0 },
+  targetVCorrectionFactor: {
+    min: 0.01,
+    max: 1,
+    mean: 0.5,
+    stdev: 0.1,
+    skew: 0,
+  },
+  sightRadius: { min: 50, max: 500, mean: 275, stdev: 50, skew: 0 },
+  sightPeripheralDeg: { min: 140, max: 360, mean: 250, stdev: 50, skew: 0 },
+  separationDistance: { min: 10, max: 200, mean: 100, stdev: 25, skew: 0 },
+  separationFactor: { min: 0.01, max: 2, mean: 1, stdev: 0.1, skew: 0 },
+  gravitationFactor: { min: 0.01, max: 1.5, mean: 1, stdev: 0.1, skew: 0 },
+  alignmentFactor: { min: 0.05, max: 0.5, mean: 0.25, stdev: 0.05, skew: 0 },
+  forceSmoothing: { min: 10, max: 100, mean: 50, stdev: 10, skew: 0 },
+};
+
+export const randomizeBoidType = (deviationFactor: number = 3) => {
   const randomizedValues: Partial<BoidAttrs> = {};
 
   for (const key in attributeRanges) {
     if (attributeRanges.hasOwnProperty(key)) {
-      const [min, max] = attributeRanges[key];
-      const randomValue = Math.random() * (max - min) + min;
-      randomizedValues[key] = randomValue;
+      const range = attributeRanges[key];
+      const stdev = (range.stdev || 1) * deviationFactor;
+      const randomValue = boxMullerRandom(range.mean, stdev, range.skew);
+      const scaledRandomValue =
+        randomValue * (range.max - range.min) + range.min;
+
+      // Ensure the value stays within the range
+      const clampedRandomValue = Math.min(
+        range.max,
+        Math.max(range.min, scaledRandomValue)
+      );
+
+      randomizedValues[key] = clampedRandomValue;
     }
   }
 
@@ -33,3 +57,21 @@ export const randomizeBoidType = () => {
     color: `hsl(${Math.random() * 360}, 100%, 50%)`,
   };
 };
+
+function boxMullerRandom(mean = 0, stdev = 1, skew = 0) {
+  let u = 0,
+    v = 0;
+  while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+  while (v === 0) v = Math.random();
+  let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+
+  // Apply the skew
+  if (skew !== 0) {
+    num = Math.pow(num, skew);
+  }
+
+  // Scale and shift by mean and stdev
+  num = num * stdev + mean;
+
+  return num;
+}

@@ -10,16 +10,16 @@ const boidVec: BoidVec = {
 };
 
 export const defaultAttrs: BoidAttrs = {
-  mass: 0.3e-4,
+  mass: 0.3,
   targetV: 140,
   maxV: 600,
-  targetVCorrectionFactor: 0.5,
+  targetVCorrectionFactor: 1,
   sightRadius: 200,
   sightPeripheralDeg: 200,
-  separationDistance: 30,
-  separationFactor: 0.5,
-  gravitationFactor: 0.4,
-  alignmentFactor: 0.1,
+  separationDistance: 50,
+  separationFactor: 1,
+  gravitationFactor: 1,
+  alignmentFactor: 0.08,
   forceSmoothing: 20,
   randomImpulses: [],
   color: "hsl(0, 100%, 50%)",
@@ -30,7 +30,7 @@ const defaultBoid = {
   ...defaultAttrs,
 };
 
-const maxGlobalSpeed = 1000;
+const maxGlobalSpeed = 1500;
 let defaultDetractorDistance = 200;
 let defaultDetractorStrength = 40000;
 let speedScalar = 1;
@@ -98,17 +98,16 @@ function updateFrame(
     force = add(force, brakingForce(boid));
 
     if (boid.forceSmoothing > 0 && boid.forceMovingAverage) {
-      force = boid.forceMovingAverage(force);
+      //force = boid.forceMovingAverage(force);
     }
 
-    vec.accel[0] = (force[0] * dt * dt) / (boid.mass + 0.000001);
-    vec.accel[1] = (force[1] * dt * dt) / (boid.mass + 0.000001);
-
-    vec.vel[0] += vec.accel[0] * dt;
-    vec.vel[1] += vec.accel[1] * dt;
+    // Update velocity
+    vec.vel[0] += (force[0] * dt) / (boid.mass + 0.000001);
+    vec.vel[1] += (force[1] * dt) / (boid.mass + 0.000001);
 
     vec.vel = limitSpeed(boid, Math.min(maxGlobalSpeed, boid.maxV), 40);
 
+    // Update position using the updated velocity
     vec.pos[0] += vec.vel[0] * dt;
     vec.pos[1] += vec.vel[1] * dt;
 
