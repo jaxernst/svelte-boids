@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { width, height } from "./game.js";
+  import { width, height, renderable } from "./game.js";
   import Canvas from "./Canvas.svelte";
   import Background from "./Background.svelte";
   import DotGrid from "./DotGrid.svelte";
@@ -7,14 +7,17 @@
   import Text from "./Text.svelte";
   import FPS from "./FPS.svelte";
   import BoidSimulation from "./BoidSimulation.svelte";
-  import { addBoids, boidSim, cursorPos } from "./boidSimControls.js";
+  import {
+    addBoids,
+    boidSim,
+    currentBoidType,
+    cursorPos,
+  } from "./boidSimControls.js";
   import TwitterLogo from "./lib/svelte-components/TwitterLogo.svelte";
   import Detractors from "./Detractors.svelte";
   import { randomizeBoidType } from "./lib/boid-engine/boid-creation.js";
   import { defaultAttrs } from "./lib/boid-engine/main.js";
   import type { BoidAttrs } from "./lib/boid-engine/types.js";
-
-  let currentBoidType: Partial<BoidAttrs> = defaultAttrs;
 
   $: console.log("New Species", currentBoidType);
 
@@ -111,15 +114,15 @@
           <button
             style="display:flex; gap:.5em; align-items:center"
             use:characterPause
-            on:click={() => (currentBoidType = randomizeBoidType())}
+            on:click={() => ($currentBoidType = randomizeBoidType())}
             >Randomize Species {" "}
             <div
-              style={`background-color: ${currentBoidType.color}; height:15px; width:15px; border-radius:100%; display:inline-block;`}
+              style={`background-color: ${$currentBoidType.color}; height:15px; width:15px; border-radius:100%; display:inline-block;`}
             /></button
           >
           <button
             use:characterPause
-            on:click={() => $addBoids && $addBoids(currentBoidType, 10)}
+            on:click={() => $addBoids && $addBoids($currentBoidType, 10)}
             >Spawn</button
           >
           <button
