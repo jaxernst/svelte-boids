@@ -98,7 +98,7 @@ function updateFrame(
     force = add(force, brakingForce(boid));
 
     if (boid.forceSmoothing > 0 && boid.forceMovingAverage) {
-      //force = boid.forceMovingAverage(force);
+      force = boid.forceMovingAverage(force);
     }
 
     // Update velocity

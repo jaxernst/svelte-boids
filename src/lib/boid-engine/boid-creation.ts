@@ -13,22 +13,22 @@ type AttributeProbabilityDistribution<T> = {
 };
 
 const attributeRanges: AttributeProbabilityDistribution<Partial<BoidAttrs>> = {
-  mass: { min: 0.05, max: 1, mean: 0.3, stdev: 0.3, skew: 0 },
-  targetV: { min: 5, max: 400, mean: 200, stdev: 100, skew: 0 },
+  mass: { min: 0.08, max: 1, mean: 0.3, stdev: 0.3, skew: 0 },
+  targetV: { min: 5, max: 400, mean: 170, stdev: 100, skew: 10 },
   targetVCorrectionFactor: {
     min: 0.01,
-    max: 1,
+    max: 2,
     mean: 0.5,
-    stdev: 0.1,
+    stdev: 0.4,
     skew: 0,
   },
   sightRadius: { min: 50, max: 500, mean: 275, stdev: 50, skew: 0 },
-  sightPeripheralDeg: { min: 140, max: 360, mean: 250, stdev: 50, skew: 0 },
+  sightPeripheralDeg: { min: 130, max: 360, mean: 200, stdev: 70, skew: 0 },
   separationDistance: { min: 10, max: 200, mean: 100, stdev: 25, skew: 0 },
   separationFactor: { min: 0.01, max: 2, mean: 1, stdev: 0.1, skew: 0 },
-  gravitationFactor: { min: 0.01, max: 1.5, mean: 1, stdev: 0.1, skew: 0 },
-  alignmentFactor: { min: 0.05, max: 0.5, mean: 0.25, stdev: 0.05, skew: 0 },
-  forceSmoothing: { min: 10, max: 100, mean: 50, stdev: 10, skew: 0 },
+  gravitationFactor: { min: 0.01, max: 2, mean: 0.8, stdev: 0.2, skew: 0 },
+  alignmentFactor: { min: 0.05, max: 0.5, mean: 0.1, stdev: 0.05, skew: 0 },
+  forceSmoothing: { min: 0, max: 20, mean: 5, stdev: 10, skew: 0 },
 };
 
 export const randomizeBoidType = (deviationFactor: number = 3) => {
