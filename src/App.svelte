@@ -19,7 +19,7 @@
   import { defaultAttrs } from "./lib/boid-engine/main.js";
   import type { BoidAttrs } from "./lib/boid-engine/types.js";
 
-  $: console.log("New Species", currentBoidType);
+  $: console.log("New Species", $currentBoidType);
 
   let started = false;
   $: command = $width > 700 ? "click" : "tap";
