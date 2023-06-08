@@ -31,7 +31,7 @@ const defaultBoid = {
 };
 
 const maxGlobalSpeed = 1500;
-let defaultDetractorDistance = 200;
+let defaultDetractorDistance = 100;
 let defaultDetractorStrength = 40000;
 let speedScalar = 1;
 

@@ -125,12 +125,16 @@
             on:click={() => $addBoids && $addBoids($currentBoidType, 10)}
             >Spawn</button
           >
-          <button
-            use:characterPause
-            on:click={toggleDetractorPen}
-            class:purple-bg={addingDetractor}
-            >{addingDetractor ? "Adding Detractors" : "Add Detractors"}</button
-          >
+          {#if $width > 700}
+            <button
+              use:characterPause
+              on:click={toggleDetractorPen}
+              class:purple-bg={addingDetractor}
+              >{addingDetractor
+                ? "Adding Detractors"
+                : "Add Detractors"}</button
+            >
+          {/if}
           <button use:characterPause on:click={() => $boidSim.reset()}
             >Reset</button
           >
