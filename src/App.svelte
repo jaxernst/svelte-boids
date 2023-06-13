@@ -16,8 +16,12 @@
   import TwitterLogo from "./lib/svelte-components/TwitterLogo.svelte";
   import Detractors from "./Detractors.svelte";
   import { randomizeBoidType } from "./lib/boid-engine/boid-creation.js";
-  import { defaultAttrs } from "./lib/boid-engine/main.js";
-  import type { BoidAttrs } from "./lib/boid-engine/types.js";
+  import {
+    BlueAngels,
+    GrouperSpecies1,
+    LilBuggers,
+    SlowArrows,
+  } from "./lib/presetBoids.js";
 
   $: console.log("New Species", $currentBoidType);
 
@@ -89,41 +93,30 @@
         y={$height - 20}
       />
     </div>
-    <Text
-      text={command + " to move character"}
-      fontSize={12}
-      align="right"
-      baseline="bottom"
-      x={$width - 20}
-      y={$height - 20}
-    />
 
     <FPS />
   </Canvas>
 
   <div class="overlay">
-    <div class="content-container">
-      <div class="left">
-        <h1 class="left" style="margin-bottom:0">Digital Boids</h1>
+    <div class="flex justify-between">
+      <div class="ml-5 mt-8 left">
+        <h1 class="text-[25px] md:text-[35px]" style="margin-bottom:0">
+          Digital Boids
+        </h1>
         <i class="left" style="font-size: 12px; margin-top: 1em"
           >A flocking simulation visualizer</i
         >
       </div>
-      <div class="right-bar">
+      <div class="flex flex-col m-5 gap-2 items-end text-xs md:text-base">
         {#if started}
           <button
-            style="display:flex; gap:.5em; align-items:center"
+            class="flex gap-2 items-center"
             use:characterPause
             on:click={() => ($currentBoidType = randomizeBoidType())}
             >Randomize Species {" "}
             <div
               style={`background-color: ${$currentBoidType.color}; height:15px; width:15px; border-radius:100%; display:inline-block;`}
             /></button
-          >
-          <button
-            use:characterPause
-            on:click={() => $addBoids && $addBoids($currentBoidType, 10)}
-            >Spawn</button
           >
           {#if $width > 700}
             <button
@@ -138,15 +131,30 @@
           <button use:characterPause on:click={() => $boidSim.reset()}
             >Reset</button
           >
-          <!-- 
-          <div style="font-size: 10px">
-            <Switch bind:value={$forceSmoothing} label="" design="inner" />
-          </div>
-            
-            <div style="font-size: 10px">
-              <Slider />
+          <button
+            use:characterPause
+            on:click={() => $addBoids && $addBoids($currentBoidType, 10)}
+            >Spawn</button
+          >
+          {#if false}
+            <div class="mt-4 p-2 min-h-[400px] border border-double rounded-lg">
+              <div class="pb-2">Featured Species</div>
+              <div class="flex flex-col gap-1">
+                <button on:click={() => ($currentBoidType = GrouperSpecies1)}
+                  >Grouper #1</button
+                >
+                <button on:click={() => ($currentBoidType = LilBuggers)}
+                  >Lil Buggers</button
+                >
+                <button on:click={() => ($currentBoidType = BlueAngels)}
+                  >Blue Angels</button
+                >
+                <button on:click={() => ($currentBoidType = SlowArrows)}
+                  >Slow Arrows</button
+                >
+              </div>
             </div>
-          -->
+          {/if}
         {/if}
       </div>
     </div>
@@ -171,13 +179,9 @@
     padding: 0;
   }
 
-  .left {
-    text-align: left;
-  }
-
   .twitter-link {
     position: absolute;
-    bottom: 32px;
+    bottom: 19px;
     left: 1em;
     height: 13px;
     width: 13px;
@@ -200,7 +204,6 @@
     position: absolute;
     top: 0%;
     left: 0%;
-    margin: 1em;
     width: 100%;
   }
 
@@ -212,13 +215,6 @@
   .right-bar {
     grid-column: 2;
     grid-row: 1/-1;
-    padding-top: 1.5em;
-    margin-right: 2em;
-    display: flex;
-    flex-direction: column;
-    align-items: end;
-    gap: 0.8em;
-    font-size: 0.9em;
   }
 
   @media (max-width: 700px) {
