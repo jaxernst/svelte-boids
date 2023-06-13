@@ -8,6 +8,7 @@ import {
   subtract,
   magnitude,
   add,
+  div,
 } from "./vectorMath";
 
 /** Forcing / boid perception functions */
@@ -71,15 +72,18 @@ export function combinedBoidRules(
   ctx?: CanvasRenderingContext2D,
   refDist?: number
 ): Vec2D {
+  let mSum = 0;
   const pSum = [0, 0];
   const vSum = [0, 0];
   for (let other of others) {
+    mSum += other.mass;
     pSum[0] += other.vec.pos[0];
     pSum[1] += other.vec.pos[1];
     vSum[0] += other.vec.vel[0];
     vSum[1] += other.vec.vel[1];
   }
 
+  const mAvg = mSum / others.length;
   const pAvg = [pSum[0] / others.length, pSum[1] / others.length] as Vec2D;
   const vAvg = [vSum[0] / others.length, vSum[1] / others.length] as Vec2D;
 
@@ -96,7 +100,7 @@ export function combinedBoidRules(
     sepResult = mul(vAway, refDist / (dist + 0.1));
   }
 
-  const gravResult = subtract(pAvg, boid.vec.pos);
+  const gravResult = div(mul(subtract(pAvg, boid.vec.pos), mAvg), boid.mass);
   const alignResult = subtract(vAvg, boid.vec.vel);
   const gForce = mul(gravResult, boid.gravitationFactor);
   const aForce = mul(alignResult, boid.alignmentFactor);
