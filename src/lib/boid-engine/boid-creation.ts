@@ -14,7 +14,7 @@ type AttributeProbabilityDistribution<T> = {
 };
 
 const attributeRanges: AttributeProbabilityDistribution<Partial<BoidAttrs>> = {
-  mass: { min: 0.08, max: 1, mean: 0.3, stdev: 0.9, skew: 0 },
+  mass: { min: 0.1, max: 1, mean: 0.3, stdev: 0.2, skew: 0 },
   targetV: { min: 5, max: 300, mean: 100, stdev: 100, skew: 0 },
   targetVCorrectionFactor: {
     min: 0.01,
@@ -23,16 +23,16 @@ const attributeRanges: AttributeProbabilityDistribution<Partial<BoidAttrs>> = {
     stdev: 0.5,
     skew: 0,
   },
-  sightRadius: { min: 50, max: 300, mean: 1, stdev: 20, skew: 0 },
+  sightRadius: { min: 50, max: 400, mean: 200, stdev: 20, skew: 0 },
   sightPeripheralDeg: { min: 130, max: 360, mean: 200, stdev: 70, skew: 0 },
   separationDistance: { min: 10, max: 200, mean: 100, stdev: 50, skew: 0 },
   separationFactor: { min: 0.1, max: 2, mean: 1, stdev: 0.5, skew: 0 },
-  gravitationFactor: { min: 0.1, max: 2, mean: 1, stdev: 0.5, skew: 0 },
+  gravitationFactor: { min: 0.1, max: 2, mean: 0.8, stdev: 0.5, skew: 0 },
   alignmentFactor: { min: 0.05, max: 0.5, mean: 0.1, stdev: 0.4, skew: 0 },
-  forceSmoothing: { min: 0, max: 20, mean: 5, stdev: 10, skew: 0 },
+  forceSmoothing: { min: 0, max: 40, mean: 5, stdev: 10, skew: 0 },
 };
 
-export const randomizeBoidType = (deviationFactor: number = 10) => {
+export const randomizeBoidType = (deviationFactor: number = 1) => {
   const randomizedValues: Partial<BoidAttrs> = {};
 
   for (const key in attributeRanges) {

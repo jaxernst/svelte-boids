@@ -18,7 +18,7 @@ export const defaultAttrs: BoidAttrs = {
   sightPeripheralDeg: 200,
   separationDistance: 50,
   separationFactor: 1,
-  gravitationFactor: 1,
+  gravitationFactor: 0.9,
   alignmentFactor: 0.08,
   forceSmoothing: 20,
   randomImpulses: [],
