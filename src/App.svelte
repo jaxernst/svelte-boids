@@ -109,14 +109,8 @@
       </div>
       <div class="flex flex-col m-5 gap-2 items-end text-xs md:text-base">
         {#if started}
-          <button
-            class="flex gap-2 items-center"
-            use:characterPause
-            on:click={() => ($currentBoidType = randomizeBoidType())}
-            >Randomize Species {" "}
-            <div
-              style={`background-color: ${$currentBoidType.color}; height:15px; width:15px; border-radius:100%; display:inline-block;`}
-            /></button
+          <button use:characterPause on:click={() => $boidSim.reset()}
+            >Reset</button
           >
           {#if $width > 700}
             <button
@@ -128,9 +122,16 @@
                 : "Add Detractors"}</button
             >
           {/if}
-          <button use:characterPause on:click={() => $boidSim.reset()}
-            >Reset</button
+          <button
+            class="flex gap-2 items-center"
+            use:characterPause
+            on:click={() => ($currentBoidType = randomizeBoidType())}
+            >Randomize Species {" "}
+            <div
+              style={`background-color: ${$currentBoidType.color}; height:15px; width:15px; border-radius:100%; display:inline-block;`}
+            /></button
           >
+
           <button
             use:characterPause
             on:click={() => $addBoids && $addBoids($currentBoidType, 10)}
