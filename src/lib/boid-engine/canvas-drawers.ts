@@ -1,12 +1,30 @@
 import type { AttributeRange } from "./boid-creation";
 
-export function drawPoint(x, y, ctx: CanvasRenderingContext2D) {
-  ctx.fillStyle = "yellow";
-  ctx.shadowBlur = 3;
-  ctx.shadowColor = "yellow";
+export function drawPoint(x, y, ctx: CanvasRenderingContext2D, color?: string) {
+  let inverseColor = color;
+
+  if (color) {
+    // Extract the HSL values
+    let hsl = color.match(/\d+(\.\d+)?/g);
+
+    if (hsl) {
+      let h = parseFloat(hsl[0]);
+      let s = parseFloat(hsl[1]);
+      let l = parseFloat(hsl[2]);
+
+      // Invert the hue
+      h = (h + 180) % 360;
+
+      // Build the inverted color
+      inverseColor = `hsl(${h}, ${s}%, ${l}%)`;
+    }
+  } else {
+    inverseColor = "hsl(60, 100%, 50%)"; // default color if no color is provided
+  }
+
+  ctx.fillStyle = inverseColor;
   ctx.moveTo(x, y);
   ctx.fillRect(x, y, 3, 3);
-  ctx.shadowBlur = 0;
 }
 
 export function canvasArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
