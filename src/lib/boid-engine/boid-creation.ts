@@ -14,7 +14,7 @@ type AttributeProbabilityDistribution<T> = {
 };
 
 const attributeRanges: AttributeProbabilityDistribution<Partial<BoidAttrs>> = {
-  mass: { min: 0.1, max: 1, mean: 0.3, stdev: 0.2, skew: 0 },
+  mass: { min: 0.08, max: 3, mean: 0.25, stdev: 0.5, skew: 0 },
   targetV: { min: 5, max: 300, mean: 100, stdev: 100, skew: 0 },
   targetVCorrectionFactor: {
     min: 0.01,
