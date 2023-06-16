@@ -41,7 +41,7 @@ export function gravitate(boid: Boid, others: Boid[], ctx) {
   const pAvg = [pSum[0] / others.length, pSum[1] / others.length] as Vec2D;
 
   // Draw cg
-  drawPoint(...pAvg, ctx);
+  drawPoint(...pAvg, ctx, boid.color);
 
   return subtract(pAvg, boid.vec.pos);
 }
@@ -88,7 +88,7 @@ export function combinedBoidRules(
   const vAvg = [vSum[0] / others.length, vSum[1] / others.length] as Vec2D;
 
   // Draw cg
-  drawPoint(...pAvg, ctx);
+  drawPoint(...pAvg, ctx, boid.color);
 
   // Sep
   let sepResult;
