@@ -41,7 +41,6 @@ export const RandomForceGenerator = (
       : [0, 0];
 
   return () => {
-    console.log(applyMovingAverage(generateRandom()));
     return applyMovingAverage(generateRandom());
   };
 };
