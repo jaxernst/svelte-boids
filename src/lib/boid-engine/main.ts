@@ -68,7 +68,7 @@ function updateFrame(
   ctx
 ) {
   let i = 0;
-  for (let boid of boids) {
+  for (const boid of boids) {
     let vec = boid.vec;
     let others = [...boids];
     others.splice(i, 1); // Remove current boid index
