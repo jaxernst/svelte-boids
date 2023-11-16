@@ -22,6 +22,7 @@
     LilBuggers,
     SlowArrows,
   } from "./lib/presetBoids.js";
+  import Github from "./lib/svelte-components/Github.svelte";
 
   $: console.log("New Species", $currentBoidType);
 
@@ -83,16 +84,6 @@
       {characterPaused}
     />
     <Detractors />
-    <div class="big-screen-only">
-      <Text
-        text="Jackson Ernst | Digital Journey"
-        fontSize={12}
-        align="left"
-        baseline="bottom"
-        x={36}
-        y={$height - 20}
-      />
-    </div>
 
     <FPS />
   </Canvas>
@@ -162,8 +153,16 @@
   </div>
 
   <div class="twitter-link">
-    <a href="https://twitter.com/yachtyyachty" target="_blank" rel="noreferrer">
-      <TwitterLogo />
+    <a
+      href="https://twitter.com/yachtyyachty"
+      style="display:flex; gap:4px; items:center; font-size:12px; color:rgb(200,200,200);"
+      target="_blank"
+      rel="noreferrer"
+    >
+      <div style="width:18px; display:flex; fill:rgb(200,200,200);">
+        <Github />
+      </div>
+      by Jackson Ernst
     </a>
   </div>
 
@@ -184,8 +183,6 @@
     position: absolute;
     bottom: 19px;
     left: 1em;
-    height: 13px;
-    width: 13px;
   }
 
   .centered-button {
