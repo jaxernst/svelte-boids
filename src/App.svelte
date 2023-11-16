@@ -154,7 +154,7 @@
 
   <div class="twitter-link">
     <a
-      href="https://twitter.com/yachtyyachty"
+      href="https://github.com/jaxernst"
       style="display:flex; gap:4px; items:center; font-size:12px; color:rgb(200,200,200);"
       target="_blank"
       rel="noreferrer"
