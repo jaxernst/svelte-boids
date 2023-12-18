@@ -64,6 +64,8 @@
     addingDetractor = !addingDetractor;
     waitingForClick = false;
   }
+
+  let hidden = false;
 </script>
 
 <svelte:window on:click={maybeAddDetractor} />
@@ -124,14 +126,9 @@
             /></button
           >
 
-          <button
-            use:characterPause
-            on:click={() => $addBoids && $addBoids($currentBoidType, 10)}
-            >Spawn</button
-          >
           {#if true}
-            <div class="mt-4 p-2 border border-double rounded-lg">
-              <div class="pb-2 text-gray-500 font-semibold">
+            <div class="p-2 border border-[#b12727c9] rounded-lg">
+              <div class="pb-2 text-gray-300 font-semibold">
                 Featured Species
               </div>
               <div>
@@ -142,18 +139,26 @@
                       return s.name === e.target.value;
                     });
 
-                    $currentBoidType = choice;
+                    if (choice) {
+                      $currentBoidType = choice;
+                    }
                   }}
                 >
-                  <option value="GrouperSpecies1">Grouper #1</option>
-                  <option value="LilBuggers">Lil Buggers</option>
-                  <option value="BlueAngels">Blue Angels</option>
-                  <option value="SlowArrows">Slow Arrows</option>
-                  <option value="Juggernauts">Juggernauts</option>
+                  <option value={"default"}>Default</option>
+                  {#each BoidSpecies as species}
+                    <option value={species.name}>{species.name}</option>
+                  {/each}
                 </select>
               </div>
             </div>
           {/if}
+
+          <div class="spacer h-2" />
+          <button
+            use:characterPause
+            on:click={() => $addBoids && $addBoids($currentBoidType, 10)}
+            >Spawn</button
+          >
         {/if}
       </div>
     </div>
