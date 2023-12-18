@@ -18,6 +18,7 @@
   import { randomizeBoidType } from "./lib/boid-engine/boid-creation.js";
   import {
     BlueAngels,
+    BoidSpecies,
     GrouperSpecies1,
     LilBuggers,
     SlowArrows,
@@ -128,22 +129,28 @@
             on:click={() => $addBoids && $addBoids($currentBoidType, 10)}
             >Spawn</button
           >
-          {#if false}
-            <div class="mt-4 p-2 min-h-[400px] border border-double rounded-lg">
-              <div class="pb-2">Featured Species</div>
-              <div class="flex flex-col gap-1">
-                <button on:click={() => ($currentBoidType = GrouperSpecies1)}
-                  >Grouper #1</button
+          {#if true}
+            <div class="mt-4 p-2 border border-double rounded-lg">
+              <div class="pb-2 text-gray-500 font-semibold">
+                Featured Species
+              </div>
+              <div>
+                <select
+                  class="bg-transparent"
+                  on:change={(e) => {
+                    const choice = BoidSpecies.find((s) => {
+                      return s.name === e.target.value;
+                    });
+
+                    $currentBoidType = choice;
+                  }}
                 >
-                <button on:click={() => ($currentBoidType = LilBuggers)}
-                  >Lil Buggers</button
-                >
-                <button on:click={() => ($currentBoidType = BlueAngels)}
-                  >Blue Angels</button
-                >
-                <button on:click={() => ($currentBoidType = SlowArrows)}
-                  >Slow Arrows</button
-                >
+                  <option value="GrouperSpecies1">Grouper #1</option>
+                  <option value="LilBuggers">Lil Buggers</option>
+                  <option value="BlueAngels">Blue Angels</option>
+                  <option value="SlowArrows">Slow Arrows</option>
+                  <option value="Juggernauts">Juggernauts</option>
+                </select>
               </div>
             </div>
           {/if}

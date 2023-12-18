@@ -7,10 +7,13 @@ import {
 import { derived, writable } from "svelte/store";
 import { height, width } from "./game";
 import { getRand } from "./lib/util";
+import type { Species } from "./lib/presetBoids";
 
 export const cursorPos = writable<{ x: number; y: number } | undefined>();
 export const boidSim = writable<ReturnType<typeof createBoidSimulation>>();
-export const currentBoidType = writable<Partial<BoidAttrs>>(defaultAttrs);
+export const currentBoidType = writable<Partial<BoidAttrs> | Species>(
+  defaultAttrs
+);
 
 export const addBoids = derived(
   [boidSim, width, height],
