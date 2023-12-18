@@ -17,7 +17,7 @@
     })
   );
 
-  $: drawBoid = MakeBoidDrawer($width > 700 ? 5 : 3);
+  $: drawBoid = MakeBoidDrawer($width > 700 ? 3 : 3);
 
   renderable((props, dt) => {
     if (!started) return;
