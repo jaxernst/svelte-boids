@@ -80,10 +80,26 @@ export const Juggernauts = {
   color: "hsl(3.151485712160751, 100%, 50%)",
 };
 
+const AtomBoid = {
+  name: "AtomBoid",
+  mass: 0.08,
+  targetV: 5,
+  targetVCorrectionFactor: 0.3476252575658127,
+  sightRadius: 196.6367335331217,
+  sightPeripheralDeg: 218.38755725985425,
+  separationDistance: 67.8248306069898,
+  separationFactor: 1.442214435613763,
+  gravitationFactor: 0.8146509495119941,
+  alignmentFactor: 0.5,
+  forceSmoothing: 0,
+  color: "hsl(109.55667502775175, 100%, 50%)",
+};
+
 export const BoidSpecies: Species[] = [
   Juggernauts,
   SlowArrows,
   BlueAngels,
   LilBuggers,
   GrouperSpecies1,
+  AtomBoid,
 ];
