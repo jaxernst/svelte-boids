@@ -62,7 +62,7 @@ export const SlowArrows = {
   gravitationFactor: 2,
   alignmentFactor: 0.5,
   forceSmoothing: 20,
-  color: "hsl(348.3409003520865, 100%, 50%)",
+  color: "hsl(248.3409003520865, 100%, 50%)",
 };
 
 export const Juggernauts = {
@@ -77,7 +77,7 @@ export const Juggernauts = {
   gravitationFactor: 0.46736636981965757,
   alignmentFactor: 0.18187617700290507,
   forceSmoothing: 31.14850873946981,
-  color: "hsl(3.151485712160751, 100%, 50%)",
+  color: "hsl(30.151485712160751, 100%, 50%)",
 };
 
 const AtomBoid = {
