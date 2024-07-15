@@ -11,15 +11,15 @@ const boidVec: BoidVec = {
 
 export const defaultAttrs: BoidAttrs = {
   mass: 0.2,
-  targetV: 130,
-  targetVCorrectionFactor: 0.85,
+  targetV: 135,
+  targetVCorrectionFactor: 0.3,
   sightRadius: 224.47,
   sightPeripheralDeg: 110,
   separationDistance: 125,
   separationFactor: 1.225,
   gravitationFactor: 0.11,
   alignmentFactor: 0.5,
-  forceSmoothing: 10,
+  forceSmoothing: 11,
   color: "hsl(77, 100%, 50%)",
   maxV: 600,
   randomImpulses: [],

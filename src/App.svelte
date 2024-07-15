@@ -158,7 +158,7 @@
             style="padding: 12px; background-color: green"
             use:characterPause
             on:click={() => $addBoids && $addBoids($currentBoidType, 10)}
-            >Spawn</button
+            >Spawn!</button
           >
         {/if}
       </div>
