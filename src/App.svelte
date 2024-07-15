@@ -76,7 +76,7 @@
       <DotGrid divisions={30} color="hsla(0, 0%, 100%, 0.5)" />
     </Background>
 
-    <BoidSimulation {started} initNumBoids={25} />
+    <BoidSimulation {started} initNumBoids={45} />
     <Character
       storeToUpdate={cursorPos}
       size={$width > 700 ? 10 : 7}

@@ -6,7 +6,7 @@
   import { getRand } from "./lib/util";
 
   export let started = false;
-  export let initNumBoids = 0;
+  export let initNumBoids = 25;
 
   boidSim.set(
     createBoidSimulation({

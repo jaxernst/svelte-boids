@@ -2,6 +2,23 @@ import type { BoidAttrs } from "./boid-engine/types";
 
 export type Species = Partial<BoidAttrs> & { name: string };
 
+export const RedFighters = {
+  name: "RedFighters",
+  mass: 0.3,
+  targetV: 140,
+  maxV: 600,
+  targetVCorrectionFactor: 1,
+  sightRadius: 200,
+  sightPeripheralDeg: 200,
+  separationDistance: 50,
+  separationFactor: 1,
+  gravitationFactor: 0.9,
+  alignmentFactor: 0.08,
+  forceSmoothing: 20,
+  randomImpulses: [],
+  color: "hsl(0, 100%, 50%)",
+};
+
 /**
  * Slow moving, high gravitation boids that carry much intertia
  */
@@ -96,6 +113,7 @@ const AtomBoid = {
 };
 
 export const BoidSpecies: Species[] = [
+  RedFighters,
   Juggernauts,
   SlowArrows,
   BlueAngels,

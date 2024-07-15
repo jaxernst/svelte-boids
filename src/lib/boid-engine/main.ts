@@ -10,19 +10,19 @@ const boidVec: BoidVec = {
 };
 
 export const defaultAttrs: BoidAttrs = {
-  mass: 0.3,
-  targetV: 140,
+  mass: 0.2,
+  targetV: 130,
+  targetVCorrectionFactor: 0.85,
+  sightRadius: 224.47,
+  sightPeripheralDeg: 110,
+  separationDistance: 125,
+  separationFactor: 1.225,
+  gravitationFactor: 0.11,
+  alignmentFactor: 0.5,
+  forceSmoothing: 10,
+  color: "hsl(77, 100%, 50%)",
   maxV: 600,
-  targetVCorrectionFactor: 1,
-  sightRadius: 200,
-  sightPeripheralDeg: 200,
-  separationDistance: 50,
-  separationFactor: 1,
-  gravitationFactor: 0.9,
-  alignmentFactor: 0.08,
-  forceSmoothing: 20,
   randomImpulses: [],
-  color: "hsl(0, 100%, 50%)",
 };
 
 const defaultBoid = {
