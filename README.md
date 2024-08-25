@@ -1,6 +1,6 @@
 # Svelte + Boids
 
-An implementation of Boid's algorithm 
+An interactive flocking simulation based on Boid's algorithm 
 
 See the live demo [here](https://digital-journey-hub.vercel.app/)!
 
